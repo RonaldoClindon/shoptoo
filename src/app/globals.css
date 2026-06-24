@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc; /* Slate-50: Premium Light Off-white */
+  --background: #e9f2fb; /* Ice-Blue: Premium Soft Light Blue */
   --foreground: #0f172a; /* Slate-900: Deep Charcoal Text */
   --card-bg: #ffffff; /* Solid white card background */
   --card-border: #e2e8f0; /* Slate-200: Subtle border */
   --accent-blue: #2563eb; /* Blue-600: Royal Blue Accent */
   --accent-blue-hover: #1d4ed8;
-  --scrollbar-track: #f8fafc;
+  --scrollbar-track: #e9f2fb;
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-thumb-hover: #94a3b8;
   
@@ -21,13 +21,13 @@
 }
 
 .dark {
-  --background: #060608; /* Deep Luxury Black */
+  --background: #090e18; /* Midnight Navy: Deep Blue-Black */
   --foreground: #f4f4f5; /* Off-white text */
   --card-bg: rgba(16, 16, 20, 0.8); /* Translucent Card Background */
   --card-border: rgba(63, 63, 70, 0.35); /* Subtle Dark Border */
   --accent-blue: #3b82f6; /* Premium Sky Blue Accent */
   --accent-blue-hover: #60a5fa;
-  --scrollbar-track: #060608;
+  --scrollbar-track: #090e18;
   --scrollbar-thumb: #1e1e24;
   --scrollbar-thumb-hover: #2d2d38;
   
