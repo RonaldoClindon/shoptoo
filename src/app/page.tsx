@@ -197,7 +197,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#f8fafc] dark:bg-[#08080a] text-slate-900 dark:text-zinc-100 flex flex-col transition-colors duration-300">
+    <div className="relative min-h-screen bg-transparent text-slate-900 dark:text-zinc-100 flex flex-col transition-colors duration-300">
       {/* Navigation */}
       <Navbar
         searchQuery={searchQuery}
