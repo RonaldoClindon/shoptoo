@@ -193,9 +193,13 @@ export default function ProductDetailModal({
                   )}
                 </button>
 
-                {/* Buy Now (Dummy) */}
+                {/* Buy Now (Direct UPI Redirection) */}
                 <button
-                  onClick={() => alert("Proceeding to dummy checkout...")}
+                  onClick={() => {
+                    const productTotal = price * quantity;
+                    const upiLink = `upi://pay?pa=8870947891@ybl&pn=PREMIUM%20SHOP&tn=${encodeURIComponent(title.substring(0, 15))}&am=${productTotal.toFixed(2)}&cu=INR`;
+                    window.location.href = upiLink;
+                  }}
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 py-2.5 text-xs font-semibold text-white transition-colors"
                 >
                   <CreditCard className="h-3.5 w-3.5" />

@@ -78,10 +78,11 @@ function ProductListing() {
       const matchesCategory =
         selectedCategory === "all" || product.category === selectedCategory;
 
-      // 3. Filter by case-insensitive Search Query
-      const matchesSearch = product.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      // 3. Filter by case-insensitive Search Query (matches title OR category)
+      const matchesSearch =
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (product.category === "jewelery" && "jewelry".includes(searchQuery.toLowerCase()));
 
       return matchesCategory && matchesSearch;
     });

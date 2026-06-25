@@ -17,7 +17,13 @@ export default function CartPage() {
   );
 
   const handleCheckout = () => {
-    alert("Proceeding to Stripe secure checkout...");
+    const tax = subtotal * 0.08;
+    const shipping = subtotal >= 100 ? 0 : 15;
+    const total = subtotal + tax + shipping;
+    
+    // Direct UPI payment redirection for Google Pay / UPI apps to the specified number
+    const upiLink = `upi://pay?pa=8870947891@ybl&pn=PREMIUM%20SHOP&tn=E-commerce%20Purchase&am=${total.toFixed(2)}&cu=INR`;
+    window.location.href = upiLink;
   };
 
   return (
