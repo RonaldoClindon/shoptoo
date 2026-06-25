@@ -37,10 +37,35 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   };
 
   const handleGoogleLogin = () => {
+    setError("");
+    // 1. If email input already contains a valid email, use it
+    if (email && /\S+@\S+\.\S+/.test(email)) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        onLoginSuccess(email);
+      }, 1000);
+      return;
+    }
+
+    // 2. Otherwise, prompt the user to input their email address
+    const userEmail = prompt(
+      "Sign in with Google Account\n\nEnter your Google email address:",
+      "your.email@gmail.com"
+    );
+
+    if (userEmail === null) return; // User cancelled prompt
+
+    const trimmedEmail = userEmail.trim();
+    if (!trimmedEmail || !/\S+@\S+\.\S+/.test(trimmedEmail)) {
+      setError("Please enter a valid Google email address.");
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess("google.user@gmail.com");
+      onLoginSuccess(trimmedEmail);
     }, 1000);
   };
 

@@ -75,9 +75,12 @@ function NavbarContent() {
           {/* User Profile / Premium Sign In Button */}
           {user ? (
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-zinc-300 shadow-sm">
+              <div 
+                className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-zinc-300 shadow-sm cursor-help"
+                title={user.email}
+              >
                 <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="max-w-[70px] truncate">{user.email.split("@")[0]}</span>
+                <span className="max-w-[120px] truncate">{user.email.split("@")[0]}</span>
               </div>
               <button
                 onClick={logout}
