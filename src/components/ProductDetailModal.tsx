@@ -70,24 +70,23 @@ export default function ProductDetailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col">
-      {/* Backdrop */}
+      {/* Backdrop — only visible on sm+ since mobile is full screen */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-gray-950/70 dark:bg-zinc-950/80 backdrop-blur-md"
+        className="absolute inset-0 bg-gray-950/70 dark:bg-zinc-950/80 backdrop-blur-md sm:block"
       />
 
-      {/* Scroll container — full height, centered on desktop */}
-      <div className="relative z-10 flex flex-1 items-end sm:items-center justify-center sm:p-4 md:p-6 overflow-y-auto">
-      {/* Modal Dialog Card */}
+      {/* On mobile: full screen. On sm+: centered card */}
+      <div className="relative z-10 flex flex-1 items-end sm:items-center justify-center sm:p-4 md:p-6">
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 40 }}
-        transition={{ type: "spring", duration: 0.4, bounce: 0.05 }}
-        className="relative w-full sm:max-w-3xl max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden rounded-t-3xl sm:rounded-2xl border-t-4 border-t-slate-900 dark:border-t-zinc-100 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 shadow-[0_-10px_40px_rgba(0,0,0,0.2)] sm:shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35)] ring-1 ring-black/10 dark:ring-white/5"
+        exit={{ opacity: 0, y: 60 }}
+        transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+        className="relative w-full h-full sm:h-auto sm:max-w-3xl sm:max-h-[88vh] flex flex-col overflow-hidden sm:rounded-2xl border-t-4 border-t-slate-900 dark:border-t-zinc-100 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] sm:shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35)] ring-1 ring-black/10 dark:ring-white/5"
       >
         {/* Close Button */}
         <button
