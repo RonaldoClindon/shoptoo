@@ -459,14 +459,14 @@ export default function CartSummary({
                       <button
                         onClick={handleConfirmPayment}
                         disabled={isLoading}
-                        className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/30 hover:shadow-emerald-600/40 hover:scale-[1.02] active:scale-95"
+                        className="flex-1 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-xs font-bold rounded-md flex items-center justify-center gap-1.5 transition-all shadow-sm shadow-emerald-500/25 hover:shadow-emerald-600/35 hover:scale-[1.01] active:scale-[0.98] ring-1 ring-emerald-400/30 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isLoading ? (
-                          <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         ) : (
-                          <CheckCircle className="h-4.5 w-4.5" />
+                          <CheckCircle className="h-3.5 w-3.5" />
                         )}
-                        <span>✅ I have Paid</span>
+                        <span>I have Paid</span>
                       </button>
                     </div>
                   </div>
@@ -514,14 +514,14 @@ export default function CartSummary({
                       <button
                         onClick={handleConfirmPayment}
                         disabled={isLoading}
-                        className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/30 hover:shadow-emerald-600/40 hover:scale-[1.02] active:scale-95"
+                        className="flex-1 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-xs font-bold rounded-md flex items-center justify-center gap-1.5 transition-all shadow-sm shadow-emerald-500/25 hover:shadow-emerald-600/35 hover:scale-[1.01] active:scale-[0.98] ring-1 ring-emerald-400/30 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isLoading ? (
-                          <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         ) : (
-                          <CheckCircle className="h-4.5 w-4.5" />
+                          <CheckCircle className="h-3.5 w-3.5" />
                         )}
-                        <span>✅ I have Paid</span>
+                        <span>I have Paid</span>
                       </button>
                     </div>
                   </div>
@@ -618,7 +618,7 @@ export default function CartSummary({
                   transition={{ delay: 0.25 }}
                   className="text-xl font-black text-white tracking-tight"
                 >
-                  Thanks for Your Purchase! 🙏
+                  Thank you for Purchasing! 🙏
                 </motion.h2>
 
                 {/* Warm greeting message */}
@@ -629,10 +629,10 @@ export default function CartSummary({
                   className="mt-2 space-y-1"
                 >
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    Your order is on its way — we promise <span className="text-emerald-400 font-semibold">premium quality</span> delivered with care.
+                    Your order is confirmed — we promise <span className="text-emerald-400 font-semibold">premium quality</span> delivered with care.
                   </p>
-                  <p className="text-[11px] text-slate-400">
-                    We truly appreciate your trust & support. 💙
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    We'd love to see you again. Please come back and visit us! 💙
                   </p>
                 </motion.div>
               </div>
@@ -711,7 +711,7 @@ export default function CartSummary({
                   transition={{ delay: 0.7 }}
                   className="text-center text-[10px] text-slate-400 dark:text-zinc-500 pb-1"
                 >
-                  A confirmation receipt has been sent to your account. 💌
+                  Thank you for choosing us — your support means the world to us! 💌 We look forward to seeing you again.
                 </motion.p>
               </div>
             </motion.div>

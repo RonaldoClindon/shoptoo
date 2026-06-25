@@ -1,118 +1,157 @@
-# LUXE | Premium Curated E-Commerce Store
+# 🛍️ LUXE — Curated Premium Store
 
-**LUXE** is a high-end, responsive product catalog listing website built using **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and **Framer Motion**. It fetches data dynamically from the [Fake Store API](https://fakestoreapi.com/products) and presents it in a premium dark-themed interface inspired by luxury retail brands.
+A modern, fully responsive ecommerce web application built with **Next.js 14**, **TypeScript**, and **Tailwind CSS**.
 
-This application has been developed to fulfill a technical evaluation exam and demonstrates clean coding practices, modular component structures, and fluid user experiences.
-
----
-
-## ✨ Features Implemented
-
-1. **Premium Aesthetic & Layout**:
-   - Dark-first aesthetic with deep slate/zinc background gradients.
-   - Glassmorphism UI panels with backdrop blurs (`backdrop-filter`) and gold accent glows on hover.
-   - Responsive layouts optimized for Desktop, Tablet, and Mobile devices.
-
-2. **Core Requirements**:
-   - **Product Images**: Loaded inside padded, white container headers to preserve original aspect ratios against dark backgrounds.
-   - **Product Titles**: Truncated to 2 lines for uniform card alignments.
-   - **Short Descriptions**: Clean summaries of each item.
-   - **Dynamic Categorization & Badges**: Categories are formatted and displayed as modern badges.
-   - **Price formatting**: Clear luxury font styling with decimal alignment.
-   - **Interactive Modal**: Clicking "View Details" opens a slide-up dialog showing full description, ratings, price, and dummy transaction controls (quantity selector, Checkout CTAs).
-
-3. **Bonus Features**:
-   - **Real-time Live Search**: Instant title search that updates the product grid as the user types.
-   - **Dynamic Category Filter**: Pill-based category buttons generated dynamically from the API datasets.
-   - **Pagination / Load More**: Displays products in batches of 8, with progress status tracking how many items remain.
-   - **Fractional Ratings**: Computes and renders star ratings supporting half-stars (e.g., 3.9 stars translates to 3 full and 1 half-star).
-   - **Custom Floating Notifications**: Adding items to the cart displays a custom-designed toast notification with smooth entry/exit animations.
-
-4. **Loading & Error Handling**:
-   - **Shimmering Card Skeletons**: Renders matching layout skeletons on initialization to eliminate layout shifts (CLS).
-   - **Error Handling**: Displays a warning interface with a reconnect/retry button to re-trigger API fetching if offline.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-shoptoo.vercel.app-black?style=for-the-badge&logo=vercel)](https://shoptoo.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-RonaldoClindon%2Fshoptoo-blue?style=for-the-badge&logo=github)](https://github.com/RonaldoClindon/shoptoo)
 
 ---
 
-## 🛠️ Tech Stack & Dependencies
+## ✨ Features
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (React 18, App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strictly typed schemas)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- 🛒 **Shopping Cart** — Add, remove, and manage products
+- 💳 **Multi-Payment Support** — Credit/Debit Card, UAE Wallets (e& money, PayIt, BOTIM, Careem), Google Pay / UPI
+- 🔍 **Product Search & Filter** — Search by name, filter by category
+- 📱 **Fully Mobile Responsive** — Works on all screen sizes
+- 🌙 **Dark / Light Mode** — Toggle between themes
+- 🎉 **Purchase Confirmation** — Animated thank you dialog after payment
+- 🔐 **Google Sign-In** — Custom email dialog (no browser prompts)
+- 🏷️ **Category Navigation** — Jewelry, Electronics, Men's, Women's
+- 💎 **Product Detail Modal** — Full-screen on mobile, card on desktop
+- 📣 **Announcement Bar** — Rotating flash sale offers
+- 🏅 **Trust Bar** — Free shipping, secure checkout, returns, fast delivery
+- 🌟 **Featured Marquee** — Scrolling best-seller products
+
+---
+
+## 🧰 Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| [Next.js 14](https://nextjs.org/) | React framework with App Router |
+| [TypeScript](https://www.typescriptlang.org/) | Type safety |
+| [Tailwind CSS](https://tailwindcss.com/) | Utility-first styling |
+| [Framer Motion](https://www.framer.com/motion/) | Animations & transitions |
+| [Lucide React](https://lucide.dev/) | Icon library |
+| [FakeStoreAPI](https://fakestoreapi.com/) | Product data |
 
 ---
 
 ## 🚀 Getting Started
 
-Follow these steps to run the application locally:
+### Prerequisites
 
-### 1. Installation
-Navigate into the project directory and install the dependencies:
+Make sure you have the following installed:
+- [Node.js](https://nodejs.org/) **v18 or higher**
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/)
+
+---
+
+### 1. Clone the Repository
+
 ```bash
-cd ecommerce-store
+git clone https://github.com/RonaldoClindon/shoptoo.git
+```
+
+### 2. Navigate to the Project Directory
+
+```bash
+cd shoptoo/ecommerce-store
+```
+
+> ⚠️ The Next.js app is inside the `ecommerce-store` subfolder.
+
+### 3. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Running in Development Mode
-Start the local development server:
+### 4. Run the Development Server
+
 ```bash
 npm run dev
 ```
-Open your browser and visit [http://localhost:3000](http://localhost:3000) to view the application.
+
+### 5. Open in Browser
+
+```
+http://localhost:3000
+```
 
 ---
 
-## 📦 Production Build & Static Export
+## 📁 Project Structure
 
-The project is configured for static exports, meaning `npm run build` will compile the code and generate static HTML/CSS/JS files inside the `/out` directory.
+```
+ecommerce-store/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx          # Home page
+│   │   ├── cart/
+│   │   │   └── page.tsx      # Cart & Checkout page
+│   │   ├── login/
+│   │   │   └── page.tsx      # Login page
+│   │   └── globals.css       # Global styles
+│   ├── components/
+│   │   ├── Navbar.tsx         # Navigation bar
+│   │   ├── Hero.tsx           # Hero section
+│   │   ├── ProductCard.tsx    # Product card
+│   │   ├── ProductDetailModal.tsx  # Product detail popup
+│   │   ├── CartSummary.tsx    # Cart & payment modal
+│   │   ├── CategoryFilter.tsx # Category filter pills
+│   │   ├── AnnouncementBar.tsx # Top banner + trust bar
+│   │   ├── FeaturedMarquee.tsx # Scrolling marquee
+│   │   ├── AuthModal.tsx      # Login/Register modal
+│   │   └── LoginForm.tsx      # Login form
+│   ├── context/
+│   │   └── AppContext.tsx     # Global state (cart, user)
+│   └── types/
+│       └── index.ts          # TypeScript interfaces
+├── public/                   # Static assets
+├── package.json
+└── tailwind.config.ts
+```
 
-To build the project:
+---
+
+## 🏗️ Build for Production
+
 ```bash
 npm run build
+npm start
 ```
-
-This static bundle (`/out`) can be hosted on any static provider such as **GitHub Pages**, **Vercel**, **Netlify**, or **Cloudflare Pages**.
 
 ---
 
-## 🌐 Deploying to GitHub Pages
+## 🌐 Deploy on Vercel
 
-If you wish to host this project directly on GitHub Pages:
+The easiest way to deploy is via [Vercel](https://vercel.com/):
 
-### Step 1: Configure Base Path (If using a repository subpath)
-If your website will live at `https://<username>.github.io/<repo-name>`, update your `next.config.mjs` to include the `basePath` property:
-```javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "export",
-  images: {
-    unoptimized: true,
-  },
-  basePath: '/repo-name',
-  assetPrefix: '/repo-name/',
-};
+1. Go to [vercel.com](https://vercel.com/)
+2. Click **"New Project"**
+3. Import `RonaldoClindon/shoptoo` from GitHub
+4. Set **Root Directory** to `ecommerce-store`
+5. Click **Deploy** ✅
 
-export default nextConfig;
-```
+---
 
-### Step 2: Push code to GitHub
-Verify that the `ecommerce-store` directory is added to your git tracking and commit the changes:
-```bash
-git add .
-git commit -m "feat: Add LUXE premium product listing page"
-git push origin main
-```
+## 📸 Screenshots
 
-### Step 3: Deploy the static folder
-You can use the `gh-pages` helper package to automatically deploy the `/out` directory:
-1. Install it: `npm install -D gh-pages`
-2. Add these scripts to `package.json`:
-   ```json
-   "scripts": {
-     "predeploy": "npm run build",
-     "deploy": "gh-pages -d out"
-   }
-   ```
-3. Run deploy: `npm run deploy`
+| Home Page | Product Detail | Checkout |
+|---|---|---|
+| Premium hero with category cards | Full-screen mobile modal | Multi-payment support |
+
+---
+
+## 👨‍💻 Author
+
+**Ronaldo Clindon**
+- GitHub: [@RonaldoClindon](https://github.com/RonaldoClindon)
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).

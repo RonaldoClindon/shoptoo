@@ -1,13 +1,14 @@
 "use client";
- 
+
 import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ShoppingBag, Search } from "lucide-react";
+import { ShoppingBag, SearchX } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CategoryFilter from "@/components/CategoryFilter";
+import SearchInput from "@/components/SearchInput";
 import ProductCard from "@/components/ProductCard";
 import ProductDetailModal from "@/components/ProductDetailModal";
 import { ProductGridSkeleton, CategoryFilterSkeleton } from "@/components/Skeletons";
@@ -152,39 +153,98 @@ function ProductListing() {
       {/* Best Sellers Marquee */}
       <FeaturedMarquee />
 
-      {/* Main Grid Content */}
+      {/* ── Main Product Grid Section ── */}
       <main id="product-grid-section" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        
-        {/* Full width Category Filter pill row */}
-        <div className="mb-8">
-          {isLoading ? (
-            <CategoryFilterSkeleton />
-          ) : (
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
+
+        {/*
+          Filter + Search Bar Row
+          ─────────────────────────────────────────────────────────────
+          Layout: category pills on the left, search input on the right.
+          On mobile they stack vertically (flex-col), on sm+ go side-by-side.
+          The search bar is scoped here (not in the Navbar) so it is only
+          visible on the product listing page and sits contextually next
+          to the filters it affects.
+        */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-start gap-3">
+          {/* Category filter pills */}
+          <div className="flex-1">
+            {isLoading ? (
+              <CategoryFilterSkeleton />
+            ) : (
+              <CategoryFilter
+                categories={categories}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            )}
+          </div>
+
+          {/* Search input — max-width keeps it compact on wide screens */}
+          <div className="w-full sm:w-64 lg:w-72 shrink-0">
+            <SearchInput
+              value={searchQuery}
+              onChange={(val) => router.push(`/?search=${encodeURIComponent(val)}`, { scroll: false })}
+              onSubmit={() => {}}
+              placeholder="Search products..."
             />
-          )}
+          </div>
         </div>
 
-        {/* Product Listing Grid Area */}
+        {/* ── Product Listing ── */}
         <section className="w-full">
           {isLoading ? (
+            // Skeleton placeholders while API is fetching
             <ProductGridSkeleton count={8} />
           ) : error ? (
+            // Error boundary fallback with retry
             <ErrorView message={error} onRetry={fetchProducts} />
           ) : filteredProducts.length === 0 ? (
-            <div className="rounded-md border border-gray-250 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 p-16 text-center shadow-sm max-w-xl mx-auto">
-              <Search className="mx-auto h-12 w-12 text-gray-400 dark:text-zinc-650" />
-              <h3 className="mt-4 font-sans text-base font-bold text-gray-800 dark:text-white">No products found</h3>
-              <p className="mt-2 text-xs text-gray-505 dark:text-gray-300">
-                No products matched &ldquo;{searchQuery}&rdquo;. Try adjusting your keywords or category filters.
-              </p>
-            </div>
+            /*
+              Empty State — shown when search/filter returns 0 results.
+              Gives the user clear feedback and a one-click way to reset.
+            */
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-xl border border-dashed border-gray-250 dark:border-zinc-700 bg-white dark:bg-zinc-900/30 p-16 text-center shadow-sm max-w-lg mx-auto mt-6"
+            >
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-zinc-800">
+                <SearchX className="h-8 w-8 text-gray-400 dark:text-zinc-500" />
+              </div>
+              <h3 className="font-sans text-base font-bold text-gray-800 dark:text-white">
+                No products found
+              </h3>
+              {searchQuery ? (
+                <p className="mt-2 text-xs text-gray-500 dark:text-zinc-400 leading-relaxed">
+                  No results for&nbsp;<span className="font-semibold text-gray-800 dark:text-zinc-200">&ldquo;{searchQuery}&rdquo;</span>.<br />
+                  Try a different keyword or clear the search.
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-gray-500 dark:text-zinc-400">
+                  No products match the selected category.
+                </p>
+              )}
+              {/* Quick-reset buttons */}
+              <div className="mt-5 flex items-center justify-center gap-2">
+                {searchQuery && (
+                  <button
+                    onClick={() => router.push("/?search=", { scroll: false })}
+                    className="rounded-md bg-gray-900 dark:bg-zinc-100 px-4 py-2 text-xs font-semibold text-white dark:text-zinc-950 hover:opacity-90 transition-opacity"
+                  >
+                    Clear Search
+                  </button>
+                )}
+                <button
+                  onClick={() => { setSelectedCategory("all"); router.push("/"); }}
+                  className="rounded-md border border-gray-200 dark:border-zinc-700 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  Show All Products
+                </button>
+              </div>
+            </motion.div>
           ) : (
             <>
-              {/* Result Info */}
+              {/* Result count summary */}
               <div className="mb-6 flex items-center justify-between border-b border-gray-100 dark:border-zinc-800/65 pb-3">
                 <p className="text-xs text-gray-500 dark:text-zinc-400">
                   Showing <span className="font-semibold text-gray-900 dark:text-zinc-200">

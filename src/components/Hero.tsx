@@ -8,38 +8,38 @@ const categories = [
   {
     label: "Jewelry",
     Icon: Gem,
-    bg: "bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/40",
-    text: "text-amber-700 dark:text-amber-300",
-    iconBg: "bg-amber-100 dark:bg-amber-900/40",
-    iconColor: "text-amber-600 dark:text-amber-400",
     desc: "Rings & Bracelets",
+    bg: "bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/40",
+    text: "text-amber-700 dark:text-amber-400",
+    iconBg: "bg-amber-100 dark:bg-amber-900/40",
+    iconColor: "text-amber-500 dark:text-amber-400",
   },
   {
     label: "Electronics",
     Icon: Cpu,
+    desc: "Gadgets & Devices",
     bg: "bg-slate-50 dark:bg-zinc-800/50 border-slate-100 dark:border-zinc-700",
     text: "text-slate-700 dark:text-zinc-200",
     iconBg: "bg-slate-200 dark:bg-zinc-700",
-    iconColor: "text-slate-600 dark:text-zinc-300",
-    desc: "Gadgets & Devices",
+    iconColor: "text-slate-500 dark:text-zinc-300",
   },
   {
     label: "Men's",
     Icon: Shirt,
+    desc: "Style for Men",
     bg: "bg-blue-50 dark:bg-blue-950/30 border-blue-100 dark:border-blue-900/40",
     text: "text-blue-700 dark:text-blue-300",
     iconBg: "bg-blue-100 dark:bg-blue-900/40",
-    iconColor: "text-blue-600 dark:text-blue-400",
-    desc: "Style for Men",
+    iconColor: "text-blue-500 dark:text-blue-400",
   },
   {
     label: "Women's",
     Icon: Sparkles,
-    bg: "bg-rose-50 dark:bg-rose-950/30 border-rose-100 dark:border-rose-900/40",
-    text: "text-rose-700 dark:text-rose-300",
-    iconBg: "bg-rose-100 dark:bg-rose-900/40",
-    iconColor: "text-rose-600 dark:text-rose-400",
     desc: "Fashion & Trends",
+    bg: "bg-rose-50 dark:bg-rose-950/30 border-rose-100 dark:border-rose-900/40",
+    text: "text-rose-600 dark:text-rose-300",
+    iconBg: "bg-rose-100 dark:bg-rose-900/40",
+    iconColor: "text-rose-500 dark:text-rose-400",
   },
 ];
 
@@ -138,28 +138,31 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* RIGHT — Category grid: 2x2 on all sizes, constrained width */}
+          {/* RIGHT — Category 2×2 grid */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="w-full lg:w-80 xl:w-96 shrink-0"
           >
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-3">
               {categories.map((cat, i) => (
                 <motion.button
                   key={cat.label}
                   initial={{ opacity: 0, scale: 0.92 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.25 + i * 0.06 }}
+                  transition={{ delay: 0.25 + i * 0.07, type: "spring", stiffness: 300 }}
                   onClick={scrollToProducts}
-                  className={`rounded-2xl border p-3 text-left transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 group w-full ${cat.bg}`}
+                  className={`rounded-2xl border p-4 text-left transition-all duration-200 hover:scale-[1.03] hover:shadow-md active:scale-[0.97] group w-full ${cat.bg}`}
                 >
-                  <div className={`inline-flex items-center justify-center w-8 h-8 rounded-xl mb-2 ${cat.iconBg} group-hover:scale-110 transition-transform duration-200`}>
-                    <cat.Icon className={`h-4 w-4 ${cat.iconColor}`} strokeWidth={1.75} />
+                  {/* Icon bubble */}
+                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl mb-3 ${cat.iconBg} group-hover:scale-110 transition-transform duration-200`}>
+                    <cat.Icon className={`h-5 w-5 ${cat.iconColor}`} strokeWidth={1.75} />
                   </div>
-                  <div className={`text-xs font-black ${cat.text}`}>{cat.label}</div>
-                  <div className="text-[9px] text-slate-400 dark:text-zinc-500 mt-0.5 leading-tight">{cat.desc}</div>
+                  {/* Label */}
+                  <div className={`text-sm font-black leading-tight ${cat.text}`}>{cat.label}</div>
+                  {/* Subtitle */}
+                  <div className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5 leading-tight">{cat.desc}</div>
                 </motion.button>
               ))}
             </div>
