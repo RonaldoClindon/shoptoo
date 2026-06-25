@@ -232,15 +232,15 @@ export default function CartSummary({
               className="fixed inset-0 z-54 bg-gray-950/60 backdrop-blur-sm"
             />
 
-            {/* Content positioner: starts below navbar (top-20), scrollable */}
-            <div className="fixed top-20 left-0 right-0 bottom-0 z-55 flex items-start justify-center p-4 overflow-y-auto pointer-events-none">
+            {/* Content positioner: starts below navbar with breathing room */}
+            <div className="fixed top-[76px] left-0 right-0 bottom-0 z-55 flex items-start justify-center px-3 pt-3 pb-4 overflow-y-auto pointer-events-none">
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="relative pointer-events-auto w-full max-w-lg rounded-2xl border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-2xl space-y-4 my-4"
+              className="relative pointer-events-auto w-full max-w-lg rounded-2xl border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-2xl space-y-4 mb-4"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 pb-3">
@@ -554,7 +554,8 @@ export default function CartSummary({
             />
 
             {/* Content positioner: starts below navbar */}
-            <div className="fixed top-20 left-0 right-0 bottom-0 z-55 flex items-start justify-center p-4 overflow-y-auto pointer-events-none">
+            {/* Content positioner: starts below navbar with breathing room */}
+            <div className="fixed top-[76px] left-0 right-0 bottom-0 z-55 flex items-start justify-center px-3 pt-3 pb-4 overflow-y-auto pointer-events-none">
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85, y: 30 }}
