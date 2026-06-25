@@ -39,7 +39,9 @@ export default function CategoryFilter({
                   : "bg-gray-150 border-gray-200/80 text-gray-600 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400 hover:bg-gray-200/60 dark:hover:bg-zinc-850"
               }`}
             >
-              {formatCategoryName(category)}
+              <span className={isActive ? "text-shimmer-silver dark:text-shimmer-charcoal" : ""}>
+                {formatCategoryName(category)}
+              </span>
             </button>
           );
         })}

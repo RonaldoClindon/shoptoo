@@ -36,6 +36,10 @@ export default function CartSummary({
       setIsLoading(false);
       setShowSuccessModal(true);
       clearCart(); // Clear cart state on successful purchase
+      
+      // Redirect to Google Pay / UPI application for direct transaction
+      const upiLink = `upi://pay?pa=8870947891@ybl&pn=PREMIUM%20SHOP&tn=E-commerce%20Purchase&am=${total.toFixed(2)}&cu=INR`;
+      window.location.href = upiLink;
     }, 2000);
   };
 
