@@ -73,7 +73,7 @@ export default function Navbar({
 
           {/* GitHub Repo */}
           <a
-            href="https://github.com/RonaldoClindon/premium-store.git"
+            href="https://github.com/RonaldoClindon/shoptoo.git"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/30 p-2.5 text-slate-450 dark:text-zinc-400 transition-all hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-800 dark:hover:text-zinc-100"
