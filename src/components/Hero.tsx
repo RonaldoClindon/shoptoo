@@ -12,32 +12,29 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-slate-100/50 dark:from-zinc-950/20 to-transparent transition-colors duration-300">
-      {/* Background radial gradient overlay (light blue) */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_60%)] pointer-events-none" />
-
+    <section className="relative overflow-hidden py-16 lg:py-20 bg-transparent border-b border-gray-100 dark:border-zinc-800/40 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         {/* Hero Title */}
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl font-serif">
-          <span className="block text-slate-900 dark:text-zinc-50">Elevate Your Lifestyle With</span>
-          <span className="mt-2 block bg-gradient-to-r from-blue-600 via-blue-500 to-sky-600 dark:from-blue-400 dark:via-blue-500 dark:to-sky-400 bg-clip-text text-transparent drop-shadow-sm">
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl font-sans">
+          <span className="block text-gray-900 dark:text-zinc-50">Elevate Your Lifestyle With</span>
+          <span className="mt-2 block bg-gradient-to-r from-gray-900 via-gray-800 to-gray-600 dark:from-zinc-50 dark:via-zinc-200 dark:to-zinc-400 bg-clip-text text-transparent drop-shadow-sm font-black">
             Premium Curated Goods
           </span>
         </h1>
 
         {/* Hero Tagline */}
-        <p className="mx-auto mt-6 max-w-2xl text-base text-slate-500 dark:text-zinc-400 sm:text-lg">
+        <p className="mx-auto mt-6 max-w-2xl text-sm sm:text-base text-gray-500 dark:text-zinc-400 leading-relaxed">
           Discover a handpicked marketplace of world-class jewelry, apparel, and electronics. 
           Crafted for those who value authenticity, modern style, and absolute premium quality.
         </p>
 
-        {/* Call to Actions - Single centered Shop Now button */}
-        <div className="mt-10 flex items-center justify-center">
+        {/* Call to Action */}
+        <div className="mt-8 flex items-center justify-center">
           <button
             onClick={scrollToProducts}
-            className="group flex items-center gap-2 rounded-full bg-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 transition-all duration-300 hover:bg-blue-700"
+            className="group flex items-center gap-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 px-6 py-3 text-xs font-semibold text-white shadow-sm transition-all duration-300"
           >
-            <span>Shop Now</span>
+            <span>Shop the Collection</span>
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
