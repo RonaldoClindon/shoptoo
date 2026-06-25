@@ -564,17 +564,17 @@ export default function CartSummary({
               className="relative pointer-events-auto w-full max-w-md rounded-3xl border border-slate-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl my-4 overflow-hidden"
             >
               {/* Top decorative banner */}
-              <div className="relative bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 px-6 pt-8 pb-10 text-center overflow-hidden">
+              <div className="relative bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 px-6 pt-7 pb-8 text-center overflow-hidden">
                 {/* Decorative circles */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 
-                {/* Floating emoji row */}
+                {/* Floating celebration row */}
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="flex items-center justify-center gap-3 mb-4"
+                  className="flex items-center justify-center gap-2 mb-3"
                 >
                   {["🎉", "🛍️", "✨", "🎊", "💳"].map((emoji, i) => (
                     <motion.span
@@ -582,11 +582,22 @@ export default function CartSummary({
                       initial={{ opacity: 0, scale: 0, rotate: -20 }}
                       animate={{ opacity: 1, scale: 1, rotate: 0 }}
                       transition={{ delay: 0.15 + i * 0.08, type: "spring", stiffness: 400 }}
-                      className="text-xl"
+                      className="text-lg"
                     >
                       {emoji}
                     </motion.span>
                   ))}
+                </motion.div>
+
+                {/* Purchase confirmed badge */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.05, type: "spring", stiffness: 350 }}
+                  className="inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-bold uppercase tracking-wider"
+                >
+                  <CheckCircle className="h-3 w-3" />
+                  Purchase Confirmed!
                 </motion.div>
 
                 {/* Big checkmark */}
@@ -594,9 +605,9 @@ export default function CartSummary({
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.1, type: "spring", stiffness: 350, damping: 20 }}
-                  className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/40"
+                  className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/40"
                 >
-                  <CheckCircle className="h-9 w-9 text-white" />
+                  <CheckCircle className="h-8 w-8 text-white" />
                 </motion.div>
 
                 {/* Thank you heading */}
@@ -604,19 +615,25 @@ export default function CartSummary({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25 }}
-                  className="text-2xl font-black text-white tracking-tight"
+                  className="text-xl font-black text-white tracking-tight"
                 >
-                  Thank You for Shopping! 🙏
+                  Thanks for Your Purchase! 🙏
                 </motion.h2>
-                <motion.p
+
+                {/* Warm greeting message */}
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.35 }}
-                  className="mt-1.5 text-xs text-slate-300 leading-relaxed"
+                  className="mt-2 space-y-1"
                 >
-                  Your order has been placed & payment confirmed.<br />
-                  We appreciate your trust in us!
-                </motion.p>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Your order is on its way — we promise <span className="text-emerald-400 font-semibold">premium quality</span> delivered with care.
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    We truly appreciate your trust & support. 💙
+                  </p>
+                </motion.div>
               </div>
 
               {/* Body content */}

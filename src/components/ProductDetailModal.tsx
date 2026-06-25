@@ -69,7 +69,7 @@ export default function ProductDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8">
+    <div className="fixed inset-0 z-50 flex flex-col">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -79,13 +79,15 @@ export default function ProductDetailModal({
         className="absolute inset-0 bg-gray-950/70 dark:bg-zinc-950/80 backdrop-blur-md"
       />
 
-      {/* Modal Dialog Card - Compact size (max-w-3xl) */}
+      {/* Scroll container — full height, centered on desktop */}
+      <div className="relative z-10 flex flex-1 items-end sm:items-center justify-center sm:p-4 md:p-6 overflow-y-auto">
+      {/* Modal Dialog Card */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        transition={{ type: "spring", duration: 0.45, bounce: 0.05 }}
-        className="relative z-10 flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border-t-4 border-t-slate-900 dark:border-t-zinc-100 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35)] ring-1 ring-black/10 dark:ring-white/5 md:h-auto"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 40 }}
+        transition={{ type: "spring", duration: 0.4, bounce: 0.05 }}
+        className="relative w-full sm:max-w-3xl max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden rounded-t-3xl sm:rounded-2xl border-t-4 border-t-slate-900 dark:border-t-zinc-100 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 shadow-[0_-10px_40px_rgba(0,0,0,0.2)] sm:shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35)] ring-1 ring-black/10 dark:ring-white/5"
       >
         {/* Close Button */}
         <button
@@ -211,6 +213,7 @@ export default function ProductDetailModal({
           </div>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 }
