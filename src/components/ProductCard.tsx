@@ -106,7 +106,7 @@ export default function ProductCard({ product, onViewDetails, onAddToCart }: Pro
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onViewDetails(product)}
-                className="flex-1 flex items-center justify-center gap-1 rounded-md border border-gray-200 dark:border-zinc-850 hover:bg-gray-50 dark:hover:bg-zinc-800/60 py-2 text-xs font-medium text-gray-700 dark:text-zinc-300 transition-colors"
+                className="flex-1 flex items-center justify-center gap-1 rounded-md border border-gray-200 dark:border-zinc-855 hover:bg-gray-50 dark:hover:bg-zinc-800/60 py-2 text-[11px] font-medium text-gray-700 dark:text-zinc-300 transition-colors"
                 title="View product details"
               >
                 <Eye className="h-3.5 w-3.5" />
@@ -115,11 +115,11 @@ export default function ProductCard({ product, onViewDetails, onAddToCart }: Pro
               
               <button
                 onClick={() => onAddToCart(product)}
-                className="flex items-center justify-center gap-1 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-white px-3 py-2 text-xs font-medium transition-colors"
-                title="Add product to bag"
+                className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-white py-2 text-[11px] font-medium transition-colors"
+                title="Purchase Now"
               >
                 <ShoppingBag className="h-3.5 w-3.5" />
-                <span>Add</span>
+                <span>Purchase Now</span>
               </button>
             </div>
           </div>

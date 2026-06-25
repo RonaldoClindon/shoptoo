@@ -29,7 +29,7 @@ function ProductListing() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [visibleCount, setVisibleCount] = useState<number>(8);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -90,7 +90,7 @@ function ProductListing() {
 
   // Reset pagination when query/filters change
   useEffect(() => {
-    setVisibleCount(8);
+    setCurrentPage(1);
   }, [selectedCategory, searchQuery]);
 
   // Add to Cart toast triggers
@@ -121,9 +121,11 @@ function ProductListing() {
     setIsModalOpen(false);
   };
 
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 8, filteredProducts.length));
-  };
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = useMemo(() => {
+    return filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  }, [filteredProducts, currentPage]);
 
   return (
     <div className="relative min-h-screen bg-transparent text-gray-900 dark:text-zinc-100 flex flex-col transition-colors duration-300">
@@ -168,14 +170,16 @@ function ProductListing() {
               {/* Result Info */}
               <div className="mb-6 flex items-center justify-between border-b border-gray-100 dark:border-zinc-800/65 pb-3">
                 <p className="text-xs text-gray-500 dark:text-zinc-400">
-                  Showing <span className="font-semibold text-gray-900 dark:text-zinc-200">{Math.min(visibleCount, filteredProducts.length)}</span> of{" "}
+                  Showing <span className="font-semibold text-gray-900 dark:text-zinc-200">
+                    {Math.min((currentPage - 1) * itemsPerPage + 1, filteredProducts.length)}-{Math.min(currentPage * itemsPerPage, filteredProducts.length)}
+                  </span> of{" "}
                   <span className="font-semibold text-gray-900 dark:text-zinc-100">{filteredProducts.length}</span> premium products
                 </p>
               </div>
 
               {/* Grid: 1 Mobile, 2 Tablet, 3-4 Desktop */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {filteredProducts.slice(0, visibleCount).map((product) => (
+                {paginatedProducts.map((product) => (
                   <ProductCard
                     key={product.id}
                     product={product}
@@ -185,18 +189,41 @@ function ProductListing() {
                 ))}
               </div>
 
-              {/* Load More Button */}
-              {visibleCount < filteredProducts.length && (
-                <div className="mt-12 flex flex-col items-center justify-center gap-2.5">
+              {/* Horizontal Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-12 flex items-center justify-center gap-1.5 select-none">
+                  {/* Prev Button */}
                   <button
-                    onClick={handleLoadMore}
-                    className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 px-8 py-3 text-xs font-semibold text-gray-700 dark:text-zinc-300 shadow-sm transition-colors hover:bg-gray-55 dark:hover:bg-zinc-850"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-1.5 text-xs font-semibold text-gray-705 dark:text-zinc-300 transition-colors hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                   >
-                    Load More Products
+                    &lt; Prev
                   </button>
-                  <span className="text-[10px] text-gray-400 dark:text-zinc-550 uppercase tracking-widest font-mono font-bold">
-                    {filteredProducts.length - visibleCount} products remaining
-                  </span>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`rounded-md px-3.5 py-1.5 text-xs font-semibold border transition-all ${
+                        currentPage === page
+                          ? "bg-gray-900 border-gray-900 text-white dark:bg-zinc-100 dark:border-zinc-100 dark:text-zinc-950 font-bold shadow-sm"
+                          : "border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3.5 py-1.5 text-xs font-semibold text-gray-705 dark:text-zinc-300 transition-colors hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    Next &gt;
+                  </button>
                 </div>
               )}
             </>

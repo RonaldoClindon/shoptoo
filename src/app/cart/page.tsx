@@ -16,15 +16,7 @@ export default function CartPage() {
     0
   );
 
-  const handleCheckout = () => {
-    const tax = subtotal * 0.08;
-    const shipping = subtotal >= 100 ? 0 : 15;
-    const total = subtotal + tax + shipping;
-    
-    // Direct UPI payment redirection for Google Pay / UPI apps to the specified number
-    const upiLink = `upi://pay?pa=8870947891@ybl&pn=PREMIUM%20SHOP&tn=E-commerce%20Purchase&am=${total.toFixed(2)}&cu=INR`;
-    window.location.href = upiLink;
-  };
+
 
   return (
     <div className="relative min-h-screen bg-transparent text-gray-900 dark:text-zinc-100 flex flex-col transition-colors duration-300">
@@ -128,7 +120,7 @@ export default function CartPage() {
             {/* Payment Summary Box (Right 4 columns on desktop) */}
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-28">
-                <CartSummary subtotal={subtotal} onCheckout={handleCheckout} />
+                <CartSummary subtotal={subtotal} />
               </div>
             </div>
 

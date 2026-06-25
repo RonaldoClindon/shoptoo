@@ -193,7 +193,7 @@ export default function ProductDetailModal({
                   )}
                 </button>
 
-                {/* Buy Now (Direct UPI Redirection) */}
+                {/* Purchase Now (Direct UPI Redirection) */}
                 <button
                   onClick={() => {
                     const productTotal = price * quantity;
@@ -203,7 +203,7 @@ export default function ProductDetailModal({
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 py-2.5 text-xs font-semibold text-white transition-colors"
                 >
                   <CreditCard className="h-3.5 w-3.5" />
-                  <span>Buy Now</span>
+                  <span>Purchase Now</span>
                 </button>
               </div>
             </div>
