@@ -58,10 +58,10 @@ export default function Hero() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* ── MOBILE layout: stacked ── DESKTOP: side by side */}
-        <div className="flex flex-col lg:flex-row items-stretch gap-4 py-5 lg:py-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 py-5 lg:py-8">
 
           {/* LEFT — Text block */}
-          <div className="flex-1 text-center lg:text-left">
+          <div className="w-full lg:max-w-lg text-center lg:text-left">
 
             {/* Flash sale badge */}
             <motion.div
