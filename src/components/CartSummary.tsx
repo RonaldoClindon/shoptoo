@@ -232,8 +232,8 @@ export default function CartSummary({
               className="fixed inset-0 z-54 bg-gray-950/60 backdrop-blur-sm"
             />
 
-            {/* Content positioner: starts below navbar with breathing room */}
-            <div className="fixed top-[76px] left-0 right-0 bottom-0 z-55 flex items-start justify-center px-3 pt-3 pb-4 overflow-y-auto pointer-events-none">
+            {/* Content positioner: starts below navbar+announcement bar */}
+            <div className="fixed top-[88px] left-0 right-0 bottom-0 z-55 flex items-start justify-center px-3 pt-4 pb-4 overflow-y-auto pointer-events-none">
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
@@ -459,14 +459,14 @@ export default function CartSummary({
                       <button
                         onClick={handleConfirmPayment}
                         disabled={isLoading}
-                        className="flex-1 h-11 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-white text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm hover:shadow-md"
+                        className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/30 hover:shadow-emerald-600/40 hover:scale-[1.02] active:scale-95"
                       >
                         {isLoading ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <Loader2 className="h-4.5 w-4.5 animate-spin" />
                         ) : (
-                          <CheckCircle className="h-3.5 w-3.5" />
+                          <CheckCircle className="h-4.5 w-4.5" />
                         )}
-                        <span>I have Paid</span>
+                        <span>✅ I have Paid</span>
                       </button>
                     </div>
                   </div>
@@ -514,14 +514,14 @@ export default function CartSummary({
                       <button
                         onClick={handleConfirmPayment}
                         disabled={isLoading}
-                        className="flex-1 h-11 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-white text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm hover:shadow-md"
+                        className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/30 hover:shadow-emerald-600/40 hover:scale-[1.02] active:scale-95"
                       >
                         {isLoading ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <Loader2 className="h-4.5 w-4.5 animate-spin" />
                         ) : (
-                          <CheckCircle className="h-3.5 w-3.5" />
+                          <CheckCircle className="h-4.5 w-4.5" />
                         )}
-                        <span>I have Paid</span>
+                        <span>✅ I have Paid</span>
                       </button>
                     </div>
                   </div>
@@ -554,8 +554,8 @@ export default function CartSummary({
             />
 
             {/* Content positioner: starts below navbar */}
-            {/* Content positioner: starts below navbar with breathing room */}
-            <div className="fixed top-[76px] left-0 right-0 bottom-0 z-55 flex items-start justify-center px-3 pt-3 pb-4 overflow-y-auto pointer-events-none">
+            {/* Content positioner: starts below navbar+announcement bar */}
+            <div className="fixed top-[88px] left-0 right-0 bottom-0 z-55 flex items-start justify-center px-3 pt-4 pb-4 overflow-y-auto pointer-events-none">
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.85, y: 30 }}
