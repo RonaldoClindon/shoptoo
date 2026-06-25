@@ -54,20 +54,21 @@ export default function AnnouncementBar() {
 
 export function TrustBar() {
   const features = [
-    { icon: Truck, text: "Free Shipping Over $100" },
-    { icon: ShieldCheck, text: "Secure SSL Checkout" },
-    { icon: RotateCcw, text: "30-Day Easy Returns" },
-    { icon: Zap, text: "Lightning Fast Delivery" },
+    { icon: Truck, text: "Free Shipping $100+" },
+    { icon: ShieldCheck, text: "Secure Checkout" },
+    { icon: RotateCcw, text: "30-Day Returns" },
+    { icon: Zap, text: "Fast Delivery" },
   ];
 
   return (
-    <div className="border-b border-slate-100 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center gap-0 divide-x divide-slate-100 dark:divide-zinc-800">
+    <div className="border-b border-slate-100 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        {/* 2-col grid on mobile, single row on md+ */}
+        <div className="grid grid-cols-2 md:flex md:items-center md:justify-center md:divide-x divide-slate-100 dark:divide-zinc-800">
           {features.map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-center gap-1.5 px-4 py-2.5">
+            <div key={text} className="flex items-center justify-center gap-1.5 px-2 py-2 md:px-4 md:py-2.5 border-b md:border-b-0 border-slate-100 dark:border-zinc-800 odd:border-r md:border-r-0">
               <Icon className="h-3.5 w-3.5 text-slate-500 dark:text-zinc-400 shrink-0" />
-              <span className="text-[10px] font-semibold text-slate-500 dark:text-zinc-400 whitespace-nowrap uppercase tracking-wide">
+              <span className="text-[9px] sm:text-[10px] font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wide">
                 {text}
               </span>
             </div>
