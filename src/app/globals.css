@@ -123,41 +123,76 @@ body::after {
 /* Premium Text Shimmer / Shining effect */
 @keyframes textShimmer {
   0% {
-    background-position: -150% 0;
+    background-position: -200% 0;
   }
   100% {
-    background-position: 150% 0;
+    background-position: 200% 0;
   }
 }
 
 .text-shimmer-silver {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.75) 0%,
-    rgba(255, 255, 255, 1) 25%,
-    rgba(255, 255, 255, 0.75) 50%,
-    rgba(255, 255, 255, 1) 75%,
-    rgba(255, 255, 255, 0.75) 100%
+    #a1a1aa 0%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #ffffff 75%,
+    #a1a1aa 100%
   );
-  background-size: 200% 100%;
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: textShimmer 3s infinite linear;
+  animation: textShimmer 2s infinite linear;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
 }
 
 .text-shimmer-charcoal {
   background: linear-gradient(
     90deg,
-    rgba(15, 23, 42, 0.75) 0%,
-    rgba(15, 23, 42, 1) 25%,
-    rgba(15, 23, 42, 0.75) 50%,
-    rgba(15, 23, 42, 1) 75%,
-    rgba(15, 23, 42, 0.75) 100%
+    #64748b 0%,
+    #0f172a 25%,
+    #000000 50%,
+    #0f172a 75%,
+    #64748b 100%
   );
-  background-size: 200% 100%;
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: textShimmer 3s infinite linear;
+  animation: textShimmer 2s infinite linear;
 }
+
+.text-shimmer-active {
+  background: linear-gradient(
+    90deg,
+    #a1a1aa 0%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #ffffff 75%,
+    #a1a1aa 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 2s infinite linear;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.dark .text-shimmer-active {
+  background: linear-gradient(
+    90deg,
+    #64748b 0%,
+    #0f172a 25%,
+    #000000 50%,
+    #0f172a 75%,
+    #64748b 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 2s infinite linear;
+}
+
