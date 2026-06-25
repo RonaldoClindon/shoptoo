@@ -3,26 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff; /* Pure White Background */
-  --foreground: #111827; /* Gray-900: Dark Charcoal Text */
-  --card-bg: #ffffff; /* Solid White Card */
-  --card-border: #f3f4f6; /* Gray-100: Extremely Subtle Border */
-  --accent-color: #111827; /* Gray-900: Solid Black Accent */
-  --accent-color-hover: #1f2937;
-  --scrollbar-track: #ffffff;
-  --scrollbar-thumb: #e5e7eb;
-  --scrollbar-thumb-hover: #d1d5db;
-  --dot-grid-pattern: radial-gradient(#f3f4f6 1.2px, transparent 1.2px);
+  --background: #f0f9ff; /* Soft sky-50 background */
+  --foreground: #0f172a; /* Slate-900: Dark Charcoal Text */
+  --card-bg: #ffffff; /* Crisp White Container */
+  --card-border: #e2e8f0; /* Slate-200: Subtle border */
+  --accent-color: #0f172a; /* Solid Slate Accent */
+  --accent-color-hover: #1e293b;
+  --scrollbar-track: #f0f9ff;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+  --dot-grid-pattern: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
 }
 
 .dark {
-  --background: #09090b; /* Zinc-950 Background */
-  --foreground: #f4f4f5; /* Zinc-100 Text */
-  --card-bg: #18181b; /* Zinc-900 Card */
+  --background: #000000; /* Pure Black Background */
+  --foreground: #f8fafc; /* Slate-50 Text */
+  --card-bg: #18181b; /* Zinc-900 Container */
   --card-border: #27272a; /* Zinc-800 Border */
-  --accent-color: #f4f4f5; /* Zinc-100: Off-white Accent */
+  --accent-color: #f8fafc; /* Slate-50 Accent */
   --accent-color-hover: #ffffff;
-  --scrollbar-track: #09090b;
+  --scrollbar-track: #000000;
   --scrollbar-thumb: #27272a;
   --scrollbar-thumb-hover: #3f3f46;
   --dot-grid-pattern: radial-gradient(rgba(255, 255, 255, 0.02) 1.2px, transparent 1.2px);

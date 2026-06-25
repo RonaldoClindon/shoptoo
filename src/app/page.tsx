@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingBag, Search } from "lucide-react";
+import { useApp } from "@/context/AppContext";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CategoryFilter from "@/components/CategoryFilter";
 import ProductCard from "@/components/ProductCard";
 import ProductDetailModal from "@/components/ProductDetailModal";
-import CartDrawer from "@/components/CartDrawer";
 import { ProductGridSkeleton, CategoryFilterSkeleton } from "@/components/Skeletons";
 import ErrorView from "@/components/ErrorView";
 import { Product } from "@/types";
@@ -19,25 +20,23 @@ interface Toast {
   productName: string;
 }
 
-export default function Home() {
+function ProductListing() {
+  const { addToCart } = useApp();
+  const searchParams = useSearchParams();
+
   // State
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [visibleCount, setVisibleCount] = useState<number>(8);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  
-  // Theme Toggle State
-  const [theme, setTheme] = useState<string>("light");
-  
-  // Cart & Toast States
-  const [cart, setCart] = useState<{ [id: number]: number }>({});
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [toastIdCounter, setToastIdCounter] = useState(0);
+
+  // Sync search state from URL query parameter
+  const searchQuery = searchParams.get("search") || "";
 
   // Fetch Products
   const fetchProducts = async () => {
@@ -61,88 +60,41 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  // Theme Toggling logic
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+  // Strict Categories definition
+  const categories = useMemo(() => {
+    return ["all", "jewelery", "men's clothing", "women's clothing", "electronics"];
   }, []);
 
-  const handleThemeToggle = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
-    setTheme(nextTheme);
-    localStorage.setItem("theme", nextTheme);
-    if (nextTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
-
-  // Compute Categories Dynamically with strict ordering:
-  // All -> Jewelry -> Men's clothing -> Women's clothing -> Electronics
-  const categories = useMemo(() => {
-    if (products.length === 0) return ["all"];
-    const unique = Array.from(new Set(products.map((p) => p.category)));
-    const list = ["all", ...unique];
-    
-    const customOrder = ["all", "jewelery", "men's clothing", "women's clothing", "electronics"];
-    
-    return list.sort((a, b) => {
-      const indexA = customOrder.indexOf(a);
-      const indexB = customOrder.indexOf(b);
-      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
-      return indexA - indexB;
-    });
-  }, [products]);
-
-  // Filter Products based on search and category
+  // Filter Products based on search and category strictly
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      // 1. Strictly categorize into the specified 4 categories
+      const isStrictCategory = ["jewelery", "men's clothing", "women's clothing", "electronics"].includes(
+        product.category
+      );
+      if (!isStrictCategory) return false;
+
+      // 2. Filter by Category Filter Pill
       const matchesCategory =
         selectedCategory === "all" || product.category === selectedCategory;
+
+      // 3. Filter by case-insensitive Search Query
       const matchesSearch = product.title
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
+
       return matchesCategory && matchesSearch;
     });
   }, [products, selectedCategory, searchQuery]);
 
-  // Reset pagination when filter changes
+  // Reset pagination when query/filters change
   useEffect(() => {
     setVisibleCount(8);
   }, [selectedCategory, searchQuery]);
 
-  // Dynamic Cart Items mapping
-  const cartItems = useMemo(() => {
-    return Object.entries(cart)
-      .map(([id, qty]) => {
-        const product = products.find((p) => p.id === parseInt(id));
-        return { product, quantity: qty };
-      })
-      .filter((item): item is { product: Product; quantity: number } => item.product !== undefined);
-  }, [cart, products]);
-
-  // Cart total count
-  const cartCount = useMemo(() => {
-    return cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  }, [cartItems]);
-
-  // Add to Cart handler (automatically triggers CartDrawer popup)
-  const handleAddToCart = (product: Product, quantity: number = 1) => {
-    setCart((prev) => ({
-      ...prev,
-      [product.id]: (prev[product.id] || 0) + quantity,
-    }));
-
-    // Auto-slide open the Cart Drawer
-    setIsCartOpen(true);
+  // Add to Cart toast triggers
+  const handleAddToCart = (product: Product, quantity = 1) => {
+    addToCart(product, quantity);
 
     // Trigger Toast
     const newToast: Toast = {
@@ -159,39 +111,15 @@ export default function Home() {
     }, 3500);
   };
 
-  // Update Cart Quantity
-  const handleUpdateQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      handleRemoveItem(productId);
-      return;
-    }
-    setCart((prev) => ({
-      ...prev,
-      [productId]: quantity,
-    }));
-  };
-
-  // Remove Cart Item
-  const handleRemoveItem = (productId: number) => {
-    setCart((prev) => {
-      const updated = { ...prev };
-      delete updated[productId];
-      return updated;
-    });
-  };
-
-  // Trigger modal detail view
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
-  // Close modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  // Load More logic
   const handleLoadMore = () => {
     setVisibleCount((prev) => Math.min(prev + 8, filteredProducts.length));
   };
@@ -199,14 +127,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-transparent text-gray-900 dark:text-zinc-100 flex flex-col transition-colors duration-300">
       {/* Navigation */}
-      <Navbar
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        cartCount={cartCount}
-        onCartClick={() => setIsCartOpen(true)}
-        theme={theme}
-        onThemeToggle={handleThemeToggle}
-      />
+      <Navbar />
 
       {/* Hero Banner */}
       <Hero />
@@ -234,21 +155,12 @@ export default function Home() {
           ) : error ? (
             <ErrorView message={error} onRetry={fetchProducts} />
           ) : filteredProducts.length === 0 ? (
-            <div className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 p-16 text-center shadow-sm">
+            <div className="rounded-md border border-gray-250 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 p-16 text-center shadow-sm max-w-xl mx-auto">
               <Search className="mx-auto h-12 w-12 text-gray-400 dark:text-zinc-650" />
-              <h3 className="mt-4 font-sans text-base font-bold text-gray-800 dark:text-zinc-200">No results found</h3>
+              <h3 className="mt-4 font-sans text-base font-bold text-gray-800 dark:text-zinc-200">No products found</h3>
               <p className="mt-2 text-xs text-gray-500 dark:text-zinc-400">
                 No products matched &ldquo;{searchQuery}&rdquo;. Try adjusting your keywords or category filters.
               </p>
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("all");
-                }}
-                className="mt-5 rounded-md border border-gray-300 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 px-5 py-2 text-xs font-semibold text-gray-600 dark:text-zinc-400 hover:bg-gray-105 dark:hover:bg-zinc-800"
-              >
-                Clear all filters
-              </button>
             </div>
           ) : (
             <>
@@ -277,7 +189,7 @@ export default function Home() {
                 <div className="mt-12 flex flex-col items-center justify-center gap-2.5">
                   <button
                     onClick={handleLoadMore}
-                    className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 px-8 py-3 text-xs font-semibold text-gray-700 dark:text-zinc-300 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-zinc-850"
+                    className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 px-8 py-3 text-xs font-semibold text-gray-700 dark:text-zinc-300 shadow-sm transition-colors hover:bg-gray-55 dark:hover:bg-zinc-850"
                   >
                     Load More Products
                   </button>
@@ -297,13 +209,6 @@ export default function Home() {
           <p className="text-xs text-gray-500 dark:text-zinc-500">
             &copy; {new Date().getFullYear()} PREMIUM SHOP. Created as a technical evaluation. All rights reserved.
           </p>
-          <div className="mt-4 flex justify-center gap-6 text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-550 font-mono">
-            <a href="#" className="hover:text-gray-600 dark:hover:text-zinc-400">Privacy Policy</a>
-            <span>•</span>
-            <a href="#" className="hover:text-gray-655 dark:hover:text-zinc-400">Terms of Service</a>
-            <span>•</span>
-            <a href="https://fakestoreapi.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-655 dark:hover:text-zinc-400">API Provider</a>
-          </div>
         </div>
       </footer>
 
@@ -315,19 +220,6 @@ export default function Home() {
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             onAddToCart={handleAddToCart}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Sliding Cart Drawer overlay */}
-      <AnimatePresence>
-        {isCartOpen && (
-          <CartDrawer
-            isOpen={isCartOpen}
-            onClose={() => setIsCartOpen(false)}
-            cartItems={cartItems}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveItem}
           />
         )}
       </AnimatePresence>
@@ -360,5 +252,20 @@ export default function Home() {
         </AnimatePresence>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="relative min-h-screen bg-transparent flex flex-col">
+        <Navbar />
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+          <ProductGridSkeleton count={8} />
+        </main>
+      </div>
+    }>
+      <ProductListing />
+    </Suspense>
   );
 }
