@@ -1,7 +1,7 @@
 "use client";
-
+ 
 import React, { useState, useEffect, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingBag, Search } from "lucide-react";
 import { useApp } from "@/context/AppContext";
@@ -12,17 +12,20 @@ import ProductCard from "@/components/ProductCard";
 import ProductDetailModal from "@/components/ProductDetailModal";
 import { ProductGridSkeleton, CategoryFilterSkeleton } from "@/components/Skeletons";
 import ErrorView from "@/components/ErrorView";
+import FeaturedMarquee from "@/components/FeaturedMarquee";
+import AnnouncementBar, { TrustBar } from "@/components/AnnouncementBar";
 import { Product } from "@/types";
-
+ 
 interface Toast {
   id: number;
   message: string;
   productName: string;
 }
-
+ 
 function ProductListing() {
   const { addToCart } = useApp();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // State
   const [products, setProducts] = useState<Product[]>([]);
@@ -112,6 +115,11 @@ function ProductListing() {
     }, 3500);
   };
 
+  const handlePurchaseNow = (product: Product, quantity = 1) => {
+    addToCart(product, quantity);
+    router.push("/cart?checkout=true");
+  };
+
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -129,14 +137,23 @@ function ProductListing() {
 
   return (
     <div className="relative min-h-screen bg-transparent text-gray-900 dark:text-zinc-100 flex flex-col transition-colors duration-300">
+      {/* Announcement bar */}
+      <AnnouncementBar />
+
       {/* Navigation */}
       <Navbar />
 
       {/* Hero Banner */}
       <Hero />
 
+      {/* Trust strip */}
+      <TrustBar />
+
+      {/* Best Sellers Marquee */}
+      <FeaturedMarquee />
+
       {/* Main Grid Content */}
-      <main id="product-grid-section" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <main id="product-grid-section" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
         
         {/* Full width Category Filter pill row */}
         <div className="mb-8">
@@ -184,7 +201,7 @@ function ProductListing() {
                     key={product.id}
                     product={product}
                     onViewDetails={handleViewDetails}
-                    onAddToCart={(p) => handleAddToCart(p, 1)}
+                    onPurchaseNow={(p) => handlePurchaseNow(p, 1)}
                   />
                 ))}
               </div>
@@ -232,11 +249,20 @@ function ProductListing() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-20 border-t border-gray-100 dark:border-zinc-900/80 bg-gray-50 dark:bg-zinc-950/40 py-10">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-xs text-gray-500 dark:text-zinc-500">
-            &copy; {new Date().getFullYear()} PREMIUM SHOP. Created as a technical evaluation. All rights reserved.
-          </p>
+      <footer className="mt-16 border-t border-slate-100 dark:border-zinc-900 bg-slate-50 dark:bg-zinc-950/60">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-lg bg-slate-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-900 text-xs font-black">P</div>
+              <span className="font-bold text-slate-700 dark:text-zinc-300 text-sm">PREMIUM SHOP</span>
+            </div>
+            <p className="text-[11px] text-slate-400 dark:text-zinc-500">
+              &copy; {new Date().getFullYear()} Premium Shop. All rights reserved.
+            </p>
+            <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-zinc-500">
+              <span>Privacy</span><span>·</span><span>Terms</span><span>·</span><span>Support</span>
+            </div>
+          </div>
         </div>
       </footer>
 
@@ -248,6 +274,7 @@ function ProductListing() {
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             onAddToCart={handleAddToCart}
+            onPurchaseNow={handlePurchaseNow}
           />
         )}
       </AnimatePresence>

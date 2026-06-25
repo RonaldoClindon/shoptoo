@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #f0f9ff; /* Soft sky-50 background */
+  --background: #f8fafc; /* Slate-50: Soft ash white background */
   --foreground: #0f172a; /* Slate-900: Dark Charcoal Text */
   --card-bg: #ffffff; /* Crisp White Container */
   --card-border: #e2e8f0; /* Slate-200: Subtle border */
-  --accent-color: #0f172a; /* Solid Slate Accent */
-  --accent-color-hover: #1e293b;
-  --scrollbar-track: #f0f9ff;
-  --scrollbar-thumb: #cbd5e1;
-  --scrollbar-thumb-hover: #94a3b8;
+  --accent-color: #475569; /* Slate-600 Accent */
+  --accent-color-hover: #334155; /* Slate-700 Hover */
+  --scrollbar-track: #f8fafc;
+  --scrollbar-thumb: #cbd5e1; /* Slate-300 */
+  --scrollbar-thumb-hover: #94a3b8; /* Slate-400 */
   --dot-grid-pattern: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
 }
 
@@ -196,3 +196,12 @@ body::after {
   animation: textShimmer 2s infinite linear;
 }
 
+/* Marquee scroll animation for FeaturedMarquee */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marqueeScroll 35s linear infinite;
+}

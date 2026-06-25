@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { CheckCircle, ShieldCheck, QrCode, ExternalLink, Loader2, Smartphone, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { CheckCircle, ShieldCheck, ExternalLink, Loader2, Smartphone, X, CreditCard, Wallet, ShoppingBag, Star, ArrowRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 
 interface CartSummaryProps {
   subtotal: number;
@@ -15,11 +16,36 @@ export default function CartSummary({
   onFormatPrice = (price: number) => `$${price.toFixed(2)}`,
 }: CartSummaryProps) {
   const { clearCart } = useApp();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const searchParams = useSearchParams();
+  const checkoutParam = searchParams.get("checkout");
 
-  const usdToInr = 83.5; // conversion rate for realistic UPI payment
+  const [isLoading, setIsLoading] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(checkoutParam === "true");
+
+  // Sync checkout modal visibility with URL search parameters
+  useEffect(() => {
+    if (checkoutParam === "true") {
+      setShowCheckoutModal(true);
+    }
+  }, [checkoutParam]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  
+  // Tabs: card | uae | gpay
+  const [activeTab, setActiveTab] = useState<"card" | "uae" | "gpay">("card");
+
+  // Card details
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [cardError, setCardError] = useState("");
+
+  // UAE wallet selection
+  const [selectedUaeWallet, setSelectedUaeWallet] = useState<"e& money" | "payit" | "botim" | "careem">("e& money");
+
+  const usdToInr = 83.5; 
+  const usdToAed = 3.67; // UAE Exchange Rate
+  
   const taxRate = 0.08; // 8% Tax
   const tax = subtotal * taxRate;
   
@@ -29,25 +55,72 @@ export default function CartSummary({
   
   const total = subtotal + tax + shippingCost;
   const totalInInr = total * usdToInr;
+  const totalInAed = total * usdToAed;
 
-  // Standard UPI Link for Google Pay
+  // UAE Wallet Intent Pay Link
+  const uaePayLink = `payit://pay?pa=8870947891@okaxis&pn=PREMIUM%20SHOP&tn=UAE%20Purchase&am=${totalInAed.toFixed(2)}&cu=AED&wallet=${encodeURIComponent(selectedUaeWallet)}`;
+  const uaeQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(uaePayLink)}`;
+
+  // Google Pay India link
   const upiLink = `upi://pay?pa=8870947891@okaxis&pn=PREMIUM%20SHOP&tn=Order%20Purchase&am=${totalInInr.toFixed(2)}&cu=INR`;
-  
-  // QR code API generated URL
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    const formatted = value.match(/.{1,4}/g)?.join(" ") || "";
+    setCardNumber(formatted.substring(0, 19));
+  };
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    let formatted = value;
+    if (value.length > 2) {
+      formatted = `${value.substring(0, 2)}/${value.substring(2, 4)}`;
+    }
+    setCardExpiry(formatted.substring(0, 5));
+  };
+
+  const handleCvvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setCardCvv(value.substring(0, 3));
+  };
+
+  const handleCardPaymentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCardError("");
+
+    const digitsOnly = cardNumber.replace(/\s/g, "");
+    if (digitsOnly.length !== 16) {
+      setCardError("Card number must be 16 digits.");
+      return;
+    }
+    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+      setCardError("Expiry date must be in MM/YY format.");
+      return;
+    }
+    if (cardCvv.length !== 3) {
+      setCardError("CVV must be 3 digits.");
+      return;
+    }
+    if (!cardName.trim()) {
+      setCardError("Cardholder name is required.");
+      return;
+    }
+
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowCheckoutModal(false);
+      setShowSuccessModal(true);
+      clearCart();
+    }, 2000);
+  };
 
   const handleGooglePayClick = () => {
     if (subtotal === 0) return;
     
-    // Show checkout modal with QR Code and app launcher
+    // Open checkout modal, defaulting tab to card
     setShowCheckoutModal(true);
-
-    // Attempt automatic redirect immediately (only works reliably on mobile)
-    try {
-      window.location.href = upiLink;
-    } catch (e) {
-      console.error("Direct UPI redirection failed:", e);
-    }
   };
 
   const handleConfirmPayment = () => {
@@ -58,6 +131,19 @@ export default function CartSummary({
       setShowSuccessModal(true);
       clearCart(); // Clear cart state on successful purchase
     }, 1800);
+  };
+
+  const receiptMethod = () => {
+    if (activeTab === "card") return "Credit/Debit Card";
+    if (activeTab === "uae") return `UAE Wallet (${selectedUaeWallet.charAt(0).toUpperCase() + selectedUaeWallet.slice(1)})`;
+    return "Google Pay (India)";
+  };
+
+  const receiptPaidAmount = () => {
+    if (activeTab === "card" || activeTab === "uae") {
+      return `AED ${totalInAed.toLocaleString('en-AE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`;
+    }
+    return `₹${totalInInr.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`;
   };
 
   return (
@@ -112,36 +198,17 @@ export default function CartSummary({
         </div>
       </div>
 
-      {/* Prominent Mock Google Pay Button */}
+      {/* Prominent Checkout Trigger Button */}
       <div className="space-y-3">
         <button
           onClick={handleGooglePayClick}
           disabled={subtotal === 0}
-          className="w-full h-11 bg-black hover:bg-zinc-900 text-white rounded-md flex items-center justify-center gap-1.5 transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed select-none"
-          title="Buy with Google Pay"
+          className="w-full h-12 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white text-white rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed select-none font-bold text-sm"
+          title="Proceed to Secure Payment"
         >
-          <div className="flex items-center justify-center">
-            {/* Google Brand G */}
-            <svg className="h-4 w-4 mr-1.5" viewBox="0 0 24 24">
-              <path
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4"
-              />
-              <path
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853"
-              />
-              <path
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                fill="#FBBC05"
-              />
-              <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                fill="#EA4335"
-              />
-            </svg>
-            {/* Pay text */}
-            <span className="font-semibold text-sm tracking-tight font-sans">Pay</span>
+          <div className="flex items-center justify-center gap-2">
+            <span>🔒</span>
+            <span className="font-bold text-sm tracking-tight font-sans">Secure Checkout</span>
           </div>
         </button>
       </div>
@@ -149,57 +216,37 @@ export default function CartSummary({
       {/* Safety Badge */}
       <div className="flex items-center justify-center gap-1.5 pt-2 text-[10px] text-gray-400 dark:text-zinc-500">
         <ShieldCheck className="h-4 w-4 text-emerald-500" />
-        <span>Verified Google Pay checkout</span>
+        <span>Verified multi-channel secure checkout</span>
       </div>
 
-      {/* Google Pay Checkout Modal */}
+      {/* Checkout Modal */}
       <AnimatePresence>
         {showCheckoutModal && (
-          <div className="fixed inset-0 z-55 flex items-center justify-center p-4">
-            {/* Backdrop */}
+          <>
+          {/* Full-screen backdrop (covers entire screen including navbar) */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowCheckoutModal(false)}
-              className="absolute inset-0 bg-gray-950/60 backdrop-blur-sm"
+              className="fixed inset-0 z-54 bg-gray-950/60 backdrop-blur-sm"
             />
 
+            {/* Content positioner: starts below navbar (top-20), scrollable */}
+            <div className="fixed top-20 left-0 right-0 bottom-0 z-55 flex items-start justify-center p-4 overflow-y-auto pointer-events-none">
             {/* Modal Content */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="relative z-10 w-full max-w-md rounded-md border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-2xl space-y-5"
+              className="relative pointer-events-auto w-full max-w-lg rounded-2xl border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-2xl space-y-4 my-4"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center bg-black dark:bg-white rounded px-2 py-0.5">
-                    {/* Google Brand G */}
-                    <svg className="h-3 w-3 mr-1" viewBox="0 0 24 24">
-                      <path
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        fill="#4285F4"
-                      />
-                      <path
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        fill="#34A853"
-                      />
-                      <path
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                        fill="#FBBC05"
-                      />
-                      <path
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                        fill="#EA4335"
-                      />
-                    </svg>
-                    <span className="font-semibold text-xs text-white dark:text-zinc-950 font-sans tracking-tight">Pay</span>
-                  </div>
                   <h3 className="font-sans text-sm font-bold text-gray-900 dark:text-white tracking-tight">
-                    Secure checkout
+                    🔒 Premium Secure Payment
                   </h3>
                 </div>
                 <button
@@ -210,142 +257,448 @@ export default function CartSummary({
                 </button>
               </div>
 
-              {/* Amount Info */}
-              <div className="text-center bg-gray-50 dark:bg-zinc-950/40 border border-gray-100 dark:border-zinc-850 p-4 rounded-md">
-                <span className="text-xs text-gray-400 dark:text-zinc-500 font-medium block">Total Payable Amount</span>
-                <span className="text-2xl font-bold text-gray-900 dark:text-white font-sans tracking-tight">
-                  ₹{totalInInr.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
-                </span>
-                <span className="text-xs text-gray-450 dark:text-zinc-400 block mt-1">
-                  (Equivalent to {onFormatPrice(total)})
-                </span>
+              {/* Segmented Tab Controllers */}
+              <div className="flex border-b border-gray-100 dark:border-zinc-800 pb-2 gap-1 text-[11px] font-semibold text-gray-400 dark:text-zinc-500">
+                <button
+                  onClick={() => setActiveTab("card")}
+                  className={`flex-1 pb-1.5 border-b-2 text-center transition-all flex items-center justify-center gap-1.5 ${
+                    activeTab === "card"
+                      ? "border-black dark:border-white text-black dark:text-white"
+                      : "border-transparent hover:text-gray-600 dark:hover:text-zinc-200"
+                  }`}
+                >
+                  <CreditCard className="h-3.5 w-3.5" />
+                  <span>Cards</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab("uae")}
+                  className={`flex-1 pb-1.5 border-b-2 text-center transition-all flex items-center justify-center gap-1.5 ${
+                    activeTab === "uae"
+                      ? "border-black dark:border-white text-black dark:text-white"
+                      : "border-transparent hover:text-gray-600 dark:hover:text-zinc-200"
+                  }`}
+                >
+                  <Wallet className="h-3.5 w-3.5" />
+                  <span>🇦🇪 UAE Apps</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab("gpay")}
+                  className={`flex-1 pb-1.5 border-b-2 text-center transition-all flex items-center justify-center gap-1.5 ${
+                    activeTab === "gpay"
+                      ? "border-black dark:border-white text-black dark:text-white"
+                      : "border-transparent hover:text-gray-600 dark:hover:text-zinc-200"
+                  }`}
+                >
+                  <Smartphone className="h-3.5 w-3.5" />
+                  <span>🇮🇳 GPay / UPI</span>
+                </button>
               </div>
 
-              {/* QR Code section */}
-              <div className="flex flex-col items-center justify-center space-y-3">
-                <div className="p-3 bg-white rounded-md border border-gray-250 shadow-sm relative group">
-                  <img
-                    src={qrCodeUrl}
-                    alt="UPI QR Code"
-                    className="w-48 h-48 select-none"
-                    draggable={false}
-                  />
-                  {/* Embedded center logo overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="bg-white p-1.5 rounded-full border border-gray-100 shadow-md">
-                      <QrCode className="h-6 w-6 text-black" />
+              {/* Tab Content Panels */}
+              <div className="py-2">
+                
+                {/* 1. Credit Card Tab */}
+                {activeTab === "card" && (
+                  <form onSubmit={handleCardPaymentSubmit} className="space-y-4">
+                    {/* Mock Card graphic */}
+                    <div className="relative h-28 w-full bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-900 dark:to-black rounded-md p-4 text-white shadow-md flex flex-col justify-between overflow-hidden">
+                      <div className="absolute top-0 right-0 h-28 w-28 bg-white/5 rounded-full blur-xl pointer-events-none" />
+                      <div className="flex justify-between items-start">
+                        <span className="text-[8px] tracking-wider uppercase opacity-50 font-mono">Premium checkout card</span>
+                        <CreditCard className="h-4.5 w-4.5 opacity-60" />
+                      </div>
+                      <div className="text-sm font-mono tracking-widest text-center py-1">
+                        {cardNumber || "•••• •••• •••• ••••"}
+                      </div>
+                      <div className="flex justify-between items-end text-[8px] font-mono">
+                        <div>
+                          <span className="block opacity-30 uppercase text-[6px]">Holder</span>
+                          <span className="truncate max-w-[150px] block font-bold">{cardName.toUpperCase() || "YOUR NAME"}</span>
+                        </div>
+                        <div>
+                          <span className="block opacity-30 uppercase text-[6px]">Expiry</span>
+                          <span className="font-bold">{cardExpiry || "MM/YY"}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {cardError && (
+                      <div className="bg-red-50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-900/40 rounded p-2.5 text-[10px] text-red-650 dark:text-red-400 font-medium">
+                        {cardError}
+                      </div>
+                    )}
+
+                    {/* Inputs */}
+                    <div className="space-y-3">
+                      {/* Name */}
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase tracking-wider font-bold text-gray-400 dark:text-zinc-550 font-mono">Cardholder Name</label>
+                        <input
+                          type="text"
+                          value={cardName}
+                          onChange={(e) => setCardName(e.target.value)}
+                          placeholder="John Smith"
+                          className="block w-full rounded border border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-950/30 py-2 px-3 text-xs text-gray-900 dark:text-white placeholder-gray-400 outline-none"
+                          required
+                        />
+                      </div>
+                      {/* Number */}
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase tracking-wider font-bold text-gray-400 dark:text-zinc-550 font-mono">Card Number</label>
+                        <input
+                          type="text"
+                          value={cardNumber}
+                          onChange={handleCardNumberChange}
+                          placeholder="4111 2222 3333 4444"
+                          className="block w-full rounded border border-gray-200 dark:border-zinc-800 bg-gray-5/50 dark:bg-zinc-950/30 py-2 px-3 text-xs text-gray-900 dark:text-white placeholder-gray-400 outline-none font-mono"
+                          required
+                        />
+                      </div>
+                      {/* Expiry & CVV */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[9px] uppercase tracking-wider font-bold text-gray-400 dark:text-zinc-550 font-mono">Expiry Date</label>
+                          <input
+                            type="text"
+                            value={cardExpiry}
+                            onChange={handleExpiryChange}
+                            placeholder="MM/YY"
+                            className="block w-full rounded border border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-950/30 py-2 px-3 text-xs text-gray-900 dark:text-white placeholder-gray-400 outline-none font-mono"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9px] uppercase tracking-wider font-bold text-gray-400 dark:text-zinc-550 font-mono">CVV</label>
+                          <input
+                            type="password"
+                            value={cardCvv}
+                            onChange={handleCvvChange}
+                            placeholder="•••"
+                            className="block w-full rounded border border-gray-200 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-950/30 py-2 px-3 text-xs text-gray-900 dark:text-white placeholder-gray-400 outline-none font-mono"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full h-12 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg disabled:opacity-60"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <span>Pay AED {totalInAed.toFixed(2)}</span>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+                {/* 2. UAE Wallets Tab */}
+                {activeTab === "uae" && (
+                  <div className="space-y-4">
+                    <div className="text-center bg-gray-50 dark:bg-zinc-950/40 border border-gray-100 dark:border-zinc-850 p-3 rounded-md">
+                      <span className="text-[10px] text-gray-400 dark:text-zinc-500 font-medium block">Total Payable in AED</span>
+                      <span className="text-xl font-bold text-gray-900 dark:text-white font-sans tracking-tight">
+                        AED {totalInAed.toLocaleString('en-AE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+
+                    {/* UAE wallets chooser */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {([
+                        { id: "e& money", emoji: "📱" },
+                        { id: "payit", emoji: "💳" },
+                        { id: "botim", emoji: "💬" },
+                        { id: "careem", emoji: "🚗" },
+                      ] as const).map((wallet) => (
+                        <button
+                          key={wallet.id}
+                          onClick={() => setSelectedUaeWallet(wallet.id)}
+                          className={`h-12 rounded-xl border-2 px-3 text-xs font-bold transition-all flex items-center gap-2 ${
+                            selectedUaeWallet === wallet.id
+                              ? "bg-slate-800 border-slate-800 text-white dark:bg-zinc-200 dark:border-zinc-200 dark:text-zinc-900 shadow-md"
+                              : "border-slate-200 dark:border-zinc-700 hover:border-slate-400 dark:hover:border-zinc-500 hover:bg-slate-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-zinc-300"
+                          }`}
+                        >
+                          <span className="text-base">{wallet.emoji}</span>
+                          <span className="capitalize">{wallet.id}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* QR Code Container */}
+                    <div className="flex flex-col items-center justify-center space-y-3 border-t border-gray-100 dark:border-zinc-850 pt-4">
+                      <div className="p-3 bg-white rounded-md border border-gray-250 shadow-sm relative">
+                        <img
+                          src={uaeQrCodeUrl}
+                          alt="UAE Wallet QR Code"
+                          className="w-40 h-40 select-none"
+                          draggable={false}
+                        />
+                      </div>
+                      <p className="text-[10px] text-center text-gray-450 dark:text-zinc-400 max-w-xs leading-normal">
+                        Scan this QR code inside your <span className="font-semibold capitalize text-gray-700 dark:text-zinc-200">{selectedUaeWallet}</span> app to pay AED {totalInAed.toFixed(2)}.
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col sm:flex-row gap-2 border-t border-gray-100 dark:border-zinc-850 pt-3">
+                      <button
+                        onClick={() => {
+                          window.location.href = uaePayLink;
+                        }}
+                        className="flex-1 h-10 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-gray-800 dark:text-zinc-200 text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-colors border border-gray-200/80 dark:border-zinc-700"
+                      >
+                        <Smartphone className="h-3.5 w-3.5" />
+                        <span>Open Wallet App</span>
+                        <ExternalLink className="h-3 w-3 opacity-60" />
+                      </button>
+
+                      <button
+                        onClick={handleConfirmPayment}
+                        disabled={isLoading}
+                        className="flex-1 h-11 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-white text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm hover:shadow-md"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <CheckCircle className="h-3.5 w-3.5" />
+                        )}
+                        <span>I have Paid</span>
+                      </button>
                     </div>
                   </div>
-                </div>
-                
-                <div className="text-center max-w-xs space-y-1">
-                  <p className="text-[11px] font-semibold text-gray-700 dark:text-zinc-300">
-                    Scan with Google Pay or any UPI app
-                  </p>
-                  <p className="text-[10px] text-gray-450 dark:text-zinc-500 leading-normal">
-                    Open your payment app, choose Scan QR, and complete payment.
-                  </p>
-                </div>
-              </div>
+                )}
 
-              {/* Actions */}
-              <div className="space-y-2 border-t border-gray-100 dark:border-zinc-850 pt-4">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {/* Launch App Button */}
-                  <button
-                    onClick={() => {
-                      window.location.href = upiLink;
-                    }}
-                    className="flex-1 h-10 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-gray-800 dark:text-zinc-200 text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-colors border border-gray-200/80 dark:border-zinc-700"
-                  >
-                    <Smartphone className="h-3.5 w-3.5" />
-                    <span>Open in GPay app</span>
-                    <ExternalLink className="h-3 w-3 opacity-60" />
-                  </button>
+                {/* 3. Indian GPay / UPI Tab */}
+                {activeTab === "gpay" && (
+                  <div className="space-y-4">
+                    {/* Amount Info */}
+                    <div className="text-center bg-gray-55 dark:bg-zinc-950/40 border border-gray-100 dark:border-zinc-850 p-3 rounded-md">
+                      <span className="text-[10px] text-gray-450 dark:text-zinc-500 font-medium block">Total Payable in INR</span>
+                      <span className="text-xl font-bold text-gray-900 dark:text-white font-sans tracking-tight">
+                        ₹{totalInInr.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
 
-                  {/* Manual verify payment */}
-                  <button
-                    onClick={handleConfirmPayment}
-                    disabled={isLoading}
-                    className="flex-1 h-10 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-colors disabled:opacity-60"
-                  >
-                    {isLoading ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <CheckCircle className="h-3.5 w-3.5" />
-                    )}
-                    <span>I have Paid</span>
-                  </button>
-                </div>
+                    {/* QR Code section */}
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <div className="p-3 bg-white rounded-md border border-gray-250 shadow-sm relative">
+                        <img
+                          src={qrCodeUrl}
+                          alt="UPI QR Code"
+                          className="w-40 h-40 select-none"
+                          draggable={false}
+                        />
+                      </div>
+                      <p className="text-[10px] text-center text-gray-450 dark:text-zinc-400 max-w-xs leading-normal">
+                        Scan QR with Google Pay or any Indian UPI app.
+                      </p>
+                    </div>
 
-                <div className="text-[9px] text-center text-gray-450 dark:text-zinc-500 flex flex-col items-center justify-center gap-0.5">
-                  <div className="flex items-center gap-1">
-                    <ShieldCheck className="h-3 w-3 text-emerald-500" />
-                    <span>100% secure UPI transaction</span>
+                    {/* Actions */}
+                    <div className="flex flex-col sm:flex-row gap-2 border-t border-gray-100 dark:border-zinc-850 pt-3">
+                      <button
+                        onClick={() => {
+                          window.location.href = upiLink;
+                        }}
+                        className="flex-1 h-10 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-750 text-gray-800 dark:text-zinc-200 text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-colors border border-gray-200/80 dark:border-zinc-700"
+                      >
+                        <Smartphone className="h-3.5 w-3.5" />
+                        <span>Open in GPay app</span>
+                        <ExternalLink className="h-3 w-3 opacity-60" />
+                      </button>
+
+                      <button
+                        onClick={handleConfirmPayment}
+                        disabled={isLoading}
+                        className="flex-1 h-11 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-white text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm hover:shadow-md"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <CheckCircle className="h-3.5 w-3.5" />
+                        )}
+                        <span>I have Paid</span>
+                      </button>
+                    </div>
                   </div>
-                  <span>UPI ID: <span className="font-semibold font-mono text-[10px]">8870947891@okaxis</span></span>
-                </div>
+                )}
+
+              </div>
+              
+              {/* Trust Badge */}
+              <div className="text-[9px] text-center text-gray-400 dark:text-zinc-550 border-t border-gray-100 dark:border-zinc-850 pt-3 flex items-center justify-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                <span>100% Secure SSL encrypted checkout connection</span>
               </div>
             </motion.div>
-          </div>
+            </div>
+          </>
         )}
       </AnimatePresence>
 
-      {/* Payment Successful Modal */}
+      {/* Payment Successful — Thank You Modal */}
       <AnimatePresence>
         {showSuccessModal && (
-          <div className="fixed inset-0 z-55 flex items-center justify-center p-4">
-            {/* Backdrop */}
+          <>
+          {/* Full-screen backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowSuccessModal(false)}
-              className="absolute inset-0 bg-gray-950/60 backdrop-blur-sm"
+              className="fixed inset-0 z-54 bg-gray-950/70 backdrop-blur-md"
             />
 
+            {/* Content positioner: starts below navbar */}
+            <div className="fixed top-20 left-0 right-0 bottom-0 z-55 flex items-start justify-center p-4 overflow-y-auto pointer-events-none">
             {/* Modal Content */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              initial={{ opacity: 0, scale: 0.85, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ type: "spring", duration: 0.4 }}
-              className="relative z-10 w-full max-w-sm rounded-md border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 text-center shadow-2xl"
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="relative pointer-events-auto w-full max-w-md rounded-3xl border border-slate-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl my-4 overflow-hidden"
             >
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-md bg-emerald-50 dark:bg-emerald-950/30 text-emerald-500 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40">
-                <CheckCircle className="h-8 w-8" />
+              {/* Top decorative banner */}
+              <div className="relative bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 px-6 pt-8 pb-10 text-center overflow-hidden">
+                {/* Decorative circles */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+                {/* Floating emoji row */}
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="flex items-center justify-center gap-3 mb-4"
+                >
+                  {["🎉", "🛍️", "✨", "🎊", "💳"].map((emoji, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ opacity: 0, scale: 0, rotate: -20 }}
+                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.15 + i * 0.08, type: "spring", stiffness: 400 }}
+                      className="text-xl"
+                    >
+                      {emoji}
+                    </motion.span>
+                  ))}
+                </motion.div>
+
+                {/* Big checkmark */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, type: "spring", stiffness: 350, damping: 20 }}
+                  className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/40"
+                >
+                  <CheckCircle className="h-9 w-9 text-white" />
+                </motion.div>
+
+                {/* Thank you heading */}
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                  className="text-2xl font-black text-white tracking-tight"
+                >
+                  Thank You for Shopping! 🙏
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.35 }}
+                  className="mt-1.5 text-xs text-slate-300 leading-relaxed"
+                >
+                  Your order has been placed & payment confirmed.<br />
+                  We appreciate your trust in us!
+                </motion.p>
               </div>
 
-              <h3 className="mt-5 font-sans text-base font-bold text-gray-900 dark:text-white tracking-tight">
-                Payment Successful
-              </h3>
-              
-              <p className="mt-2 text-xs leading-relaxed text-gray-500 dark:text-gray-300">
-                Thank you for your premium purchase! Your payment was processed successfully via Google Pay.
-              </p>
+              {/* Body content */}
+              <div className="px-6 py-5 space-y-4">
 
-              <div className="mt-5 p-3 rounded-md bg-gray-50 dark:bg-zinc-950/40 border border-gray-100 dark:border-zinc-850 text-left">
-                <div className="flex justify-between text-[10px] text-gray-400 dark:text-zinc-550 font-mono">
-                  <span>Merchant</span>
-                  <span className="font-semibold text-gray-700 dark:text-zinc-350">PREMIUM SHOP</span>
-                </div>
-                <div className="flex justify-between text-[10px] text-gray-400 dark:text-zinc-550 font-mono mt-1">
-                  <span>Amount Paid</span>
-                  <span className="font-semibold text-gray-700 dark:text-zinc-350">{onFormatPrice(total)}</span>
-                </div>
+                {/* Order receipt card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="rounded-2xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-700/50 p-4 space-y-2.5"
+                >
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-zinc-500">Order Receipt</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500 dark:text-zinc-400">Merchant</span>
+                    <span className="text-xs font-bold text-slate-800 dark:text-zinc-200">PREMIUM SHOP</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-500 dark:text-zinc-400">Payment Method</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-zinc-300">{receiptMethod()}</span>
+                  </div>
+                  <div className="border-t border-slate-200 dark:border-zinc-700 pt-2 flex justify-between items-center">
+                    <span className="text-xs font-bold text-slate-700 dark:text-zinc-200">Amount Paid</span>
+                    <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{receiptPaidAmount()}</span>
+                  </div>
+                </motion.div>
+
+                {/* Star rating prompt */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex flex-col items-center gap-2 py-2"
+                >
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">How was your experience?</p>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <motion.div
+                        key={s}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.55 + s * 0.06, type: "spring" }}
+                      >
+                        <Star className="h-5 w-5 fill-amber-400 text-amber-400 cursor-pointer hover:scale-125 transition-transform" />
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Action buttons */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex gap-3 pt-1"
+                >
+                  <button
+                    onClick={() => {
+                      setShowSuccessModal(false);
+                      window.location.href = "/";
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-slate-800 hover:bg-slate-900 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white py-3 text-xs font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-md"
+                  >
+                    <ShoppingBag className="h-3.5 w-3.5" />
+                    <span>Continue Shopping</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </motion.div>
+
+                {/* Footer note */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="text-center text-[10px] text-slate-400 dark:text-zinc-500 pb-1"
+                >
+                  A confirmation receipt has been sent to your account. 💌
+                </motion.p>
               </div>
-
-              <button
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  window.location.href = "/"; // Go back to products
-                }}
-                className="mt-6 w-full rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 py-2.5 text-xs font-semibold text-white transition-colors"
-              >
-                Continue Shopping
-              </button>
             </motion.div>
-          </div>
+            </div>
+          </>
         )}
       </AnimatePresence>
     </div>

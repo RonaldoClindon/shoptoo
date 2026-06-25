@@ -10,6 +10,7 @@ interface ProductDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddToCart: (product: Product, quantity: number) => void;
+  onPurchaseNow: (product: Product, quantity: number) => void;
 }
 
 export default function ProductDetailModal({
@@ -17,6 +18,7 @@ export default function ProductDetailModal({
   isOpen,
   onClose,
   onAddToCart,
+  onPurchaseNow,
 }: ProductDetailModalProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
@@ -34,15 +36,15 @@ export default function ProductDetailModal({
     for (let i = 1; i <= 5; i++) {
       if (i <= fullStars) {
         stars.push(
-          <Star key={i} className="h-3.5 w-3.5 fill-gray-900 text-gray-900 dark:fill-zinc-100 dark:text-zinc-100" />
+          <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
         );
       } else if (i === fullStars + 1 && hasHalfStar) {
         stars.push(
-          <StarHalf key={i} className="h-3.5 w-3.5 fill-gray-900 text-gray-900 dark:fill-zinc-100 dark:text-zinc-100" />
+          <StarHalf key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
         );
       } else {
         stars.push(
-          <Star key={i} className="h-3.5 w-3.5 text-gray-200 dark:text-zinc-800" />
+          <Star key={i} className="h-3.5 w-3.5 text-slate-200 dark:text-zinc-700" />
         );
       }
     }
@@ -74,7 +76,7 @@ export default function ProductDetailModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-gray-950/40 dark:bg-zinc-950/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-gray-950/70 dark:bg-zinc-950/80 backdrop-blur-md"
       />
 
       {/* Modal Dialog Card - Compact size (max-w-3xl) */}
@@ -83,12 +85,13 @@ export default function ProductDetailModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
         transition={{ type: "spring", duration: 0.45, bounce: 0.05 }}
-        className="relative z-10 flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-md border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 shadow-2xl md:h-auto"
+        className="relative z-10 flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border-t-4 border-t-slate-900 dark:border-t-zinc-100 bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.35)] ring-1 ring-black/10 dark:ring-white/5 md:h-auto"
       >
         {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute right-4 top-4 z-20 rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 text-gray-400 dark:text-zinc-500 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-600 dark:hover:text-zinc-300"
+          aria-label="Close product details"
         >
           <X className="h-4.5 w-4.5" />
         </button>
@@ -158,12 +161,14 @@ export default function ProductDetailModal({
                     <button
                       onClick={incrementQty}
                       className="text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300"
+                      aria-label="Increase quantity"
                     >
                       <ChevronUp className="h-3 w-3" />
                     </button>
                     <button
                       onClick={decrementQty}
                       className="text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300"
+                      aria-label="Decrease quantity"
                     >
                       <ChevronDown className="h-3 w-3" />
                     </button>
@@ -193,13 +198,9 @@ export default function ProductDetailModal({
                   )}
                 </button>
 
-                {/* Purchase Now (Direct UPI Redirection) */}
+                {/* Purchase Now */}
                 <button
-                  onClick={() => {
-                    const productTotal = price * quantity * 83.5;
-                    const upiLink = `upi://pay?pa=8870947891@okaxis&pn=PREMIUM%20SHOP&tn=${encodeURIComponent(title.substring(0, 15))}&am=${productTotal.toFixed(2)}&cu=INR`;
-                    window.location.href = upiLink;
-                  }}
+                  onClick={() => onPurchaseNow(product, quantity)}
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 py-2.5 text-xs font-semibold text-white transition-transform transform hover:scale-105 active:scale-95 duration-200 shadow-sm"
                 >
                   <span>🛍️ Purchase Now</span>

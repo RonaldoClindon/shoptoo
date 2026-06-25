@@ -64,7 +64,7 @@ function NavbarContent() {
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="rounded-md border border-gray-200 dark:border-zinc-850 bg-white/50 dark:bg-zinc-900/30 p-2.5 text-gray-500 dark:text-zinc-400 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-800 dark:hover:text-zinc-100"
+            className="h-10 w-10 flex items-center justify-center rounded-md border border-gray-250 dark:border-zinc-850 bg-white/50 dark:bg-zinc-900/30 text-gray-500 dark:text-zinc-400 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-800 dark:hover:text-zinc-100"
             title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
             {theme === "dark" ? (
@@ -79,7 +79,7 @@ function NavbarContent() {
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3.5 py-1.5 text-xs font-semibold text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm select-none"
+                className="h-10 px-3.5 flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 text-xs font-semibold text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm select-none"
               >
                 <span className="font-semibold text-gray-905 dark:text-white">✨ Hi, {user.name}</span>
                 <svg
@@ -132,7 +132,7 @@ function NavbarContent() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3.5 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-900 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-zinc-950 transition-all duration-200 shadow-sm"
+              className="h-10 px-3.5 flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-900 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-zinc-955 transition-all duration-200 shadow-sm"
               title="Sign In"
             >
               <span>👤 Sign In</span>
@@ -142,7 +142,7 @@ function NavbarContent() {
           {/* Cart Icon */}
           <Link
             href="/cart"
-            className="relative rounded-md border border-gray-200 dark:border-zinc-850 bg-white/50 dark:bg-zinc-900/30 p-2.5 text-gray-500 dark:text-zinc-400 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-800 dark:hover:text-zinc-100"
+            className="h-10 w-10 flex items-center justify-center relative rounded-md border border-gray-250 dark:border-zinc-850 bg-white/50 dark:bg-zinc-900/30 text-gray-500 dark:text-zinc-400 transition-all hover:bg-gray-50 dark:hover:bg-zinc-800 hover:text-gray-800 dark:hover:text-zinc-100"
             title="Open Bag"
           >
             <ShoppingBag className="h-4.5 w-4.5" />
