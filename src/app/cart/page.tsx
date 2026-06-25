@@ -34,17 +34,17 @@ export default function CartPage() {
           </Link>
         </div>
 
-        <h1 className="text-2xl font-bold font-sans text-gray-955 dark:text-zinc-50 mb-8 tracking-tight">
+        <h1 className="text-2xl font-bold font-sans text-gray-955 dark:text-white mb-8 tracking-tight">
           Your Shopping Bag
         </h1>
 
         {cart.length === 0 ? (
           <div className="rounded-md border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 p-16 text-center shadow-sm max-w-xl mx-auto">
             <ShoppingBag className="mx-auto h-16 w-16 text-gray-200 dark:text-zinc-800 stroke-[1.5]" />
-            <h3 className="mt-4 font-sans text-base font-semibold text-gray-800 dark:text-zinc-200">
+            <h3 className="mt-4 font-sans text-base font-semibold text-gray-800 dark:text-white">
               Your bag is empty
             </h3>
-            <p className="mt-2 text-xs text-gray-500 dark:text-zinc-400">
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-300">
               Browse our handpicked premium collections and add items to your shopping bag.
             </p>
             <Link
@@ -75,13 +75,13 @@ export default function CartPage() {
 
                   {/* Product Details */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 truncate">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                       {item.product.title}
                     </h4>
                     <span className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-550 font-mono">
                       {item.product.category === "jewelery" ? "Jewelry" : item.product.category}
                     </span>
-                    <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-zinc-100">
+                    <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
                       ${item.product.price.toFixed(2)}
                     </div>
                   </div>

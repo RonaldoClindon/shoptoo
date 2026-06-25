@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { X, Star, StarHalf, ShoppingBag, CreditCard, ChevronUp, ChevronDown, Check } from "lucide-react";
+import { X, Star, StarHalf, ShoppingBag, ChevronUp, ChevronDown, Check } from "lucide-react";
 import { Product } from "@/types";
 
 interface ProductDetailModalProps {
@@ -113,7 +113,7 @@ export default function ProductDetailModal({
               </span>
 
               {/* Title */}
-              <h2 className="mt-1 font-sans text-lg md:text-xl font-bold leading-snug tracking-tight text-gray-950 dark:text-zinc-50">
+              <h2 className="mt-1 font-sans text-lg md:text-xl font-bold leading-snug tracking-tight text-gray-955 dark:text-white">
                 {title}
               </h2>
 
@@ -130,18 +130,18 @@ export default function ProductDetailModal({
 
               {/* Price */}
               <div className="mt-4 border-b border-t border-gray-100 dark:border-zinc-800/50 py-3">
-                <span className="text-[9px] uppercase tracking-wider text-gray-400 dark:text-zinc-500 font-mono">Price</span>
-                <div className="font-sans text-xl font-semibold text-gray-900 dark:text-zinc-50">
+                <span className="text-[9px] uppercase tracking-wider text-gray-400 dark:text-zinc-550 font-mono">Price</span>
+                <div className="font-sans text-xl font-semibold text-gray-900 dark:text-white">
                   ${price.toFixed(2)}
                 </div>
               </div>
 
               {/* Description */}
               <div className="mt-4">
-                <h4 className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500 font-mono">
+                <h4 className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-550 font-mono">
                   Description
                 </h4>
-                <p className="mt-1 text-xs leading-relaxed text-gray-600 dark:text-zinc-400">
+                <p className="mt-1 text-xs leading-relaxed text-gray-650 dark:text-gray-300">
                   {description}
                 </p>
               </div>
@@ -196,14 +196,13 @@ export default function ProductDetailModal({
                 {/* Purchase Now (Direct UPI Redirection) */}
                 <button
                   onClick={() => {
-                    const productTotal = price * quantity;
-                    const upiLink = `upi://pay?pa=8870947891@ybl&pn=PREMIUM%20SHOP&tn=${encodeURIComponent(title.substring(0, 15))}&am=${productTotal.toFixed(2)}&cu=INR`;
+                    const productTotal = price * quantity * 83.5;
+                    const upiLink = `upi://pay?pa=8870947891@okaxis&pn=PREMIUM%20SHOP&tn=${encodeURIComponent(title.substring(0, 15))}&am=${productTotal.toFixed(2)}&cu=INR`;
                     window.location.href = upiLink;
                   }}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 py-2.5 text-xs font-semibold text-white transition-colors"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 py-2.5 text-xs font-semibold text-white transition-transform transform hover:scale-105 active:scale-95 duration-200 shadow-sm"
                 >
-                  <CreditCard className="h-3.5 w-3.5" />
-                  <span>Purchase Now</span>
+                  <span>🛍️ Purchase Now</span>
                 </button>
               </div>
             </div>

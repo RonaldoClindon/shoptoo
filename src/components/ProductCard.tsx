@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Star, StarHalf, ShoppingBag, Eye } from "lucide-react";
+import { Star, StarHalf, Eye } from "lucide-react";
 import { Product } from "@/types";
 
 interface ProductCardProps {
@@ -81,13 +81,13 @@ export default function ProductCard({ product, onViewDetails, onAddToCart }: Pro
         {/* Title */}
         <h3 
           onClick={() => onViewDetails(product)}
-          className="mt-3 font-sans text-sm font-semibold leading-snug text-gray-900 dark:text-zinc-100 line-clamp-2 min-h-[2.5rem] cursor-pointer hover:text-gray-600 dark:hover:text-zinc-350 transition-colors"
+          className="mt-3 font-sans text-sm font-semibold leading-snug text-gray-900 dark:text-white line-clamp-2 min-h-[2.5rem] cursor-pointer hover:text-gray-600 dark:hover:text-zinc-350 transition-colors"
         >
           {title}
         </h3>
 
         {/* Short Description */}
-        <p className="mt-2 text-xs leading-relaxed text-gray-500 dark:text-zinc-400 line-clamp-2">
+        <p className="mt-2 text-xs leading-relaxed text-gray-500 dark:text-gray-300 line-clamp-2">
           {description}
         </p>
 
@@ -96,8 +96,8 @@ export default function ProductCard({ product, onViewDetails, onAddToCart }: Pro
           {/* Price & Action Buttons */}
           <div className="flex flex-col gap-4 border-t border-gray-100 dark:border-zinc-800/80 pt-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gray-400 dark:text-zinc-500 uppercase tracking-wider font-mono">Price</span>
-              <span className="font-sans text-base font-semibold text-gray-900 dark:text-zinc-100">
+              <span className="text-[10px] text-gray-400 dark:text-zinc-550 uppercase tracking-wider font-mono">Price</span>
+              <span className="font-sans text-base font-semibold text-gray-900 dark:text-white">
                 ${price.toFixed(2)}
               </span>
             </div>
@@ -106,7 +106,7 @@ export default function ProductCard({ product, onViewDetails, onAddToCart }: Pro
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onViewDetails(product)}
-                className="flex-1 flex items-center justify-center gap-1 rounded-md border border-gray-200 dark:border-zinc-855 hover:bg-gray-50 dark:hover:bg-zinc-800/60 py-2 text-[11px] font-medium text-gray-700 dark:text-zinc-300 transition-colors"
+                className="flex-1 flex items-center justify-center gap-1 rounded-md border border-gray-200 dark:border-zinc-800 hover:bg-gray-55 dark:hover:bg-zinc-800/60 py-2 text-[11px] font-medium text-gray-700 dark:text-zinc-300 transition-colors"
                 title="View product details"
               >
                 <Eye className="h-3.5 w-3.5" />
@@ -115,11 +115,10 @@ export default function ProductCard({ product, onViewDetails, onAddToCart }: Pro
               
               <button
                 onClick={() => onAddToCart(product)}
-                className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-white py-2 text-[11px] font-medium transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-white py-2 text-[11px] font-semibold transition-transform transform hover:scale-105 active:scale-95 duration-200 shadow-sm"
                 title="Purchase Now"
               >
-                <ShoppingBag className="h-3.5 w-3.5" />
-                <span>Purchase Now</span>
+                <span>🛍️ Purchase Now</span>
               </button>
             </div>
           </div>

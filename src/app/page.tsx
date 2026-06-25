@@ -160,8 +160,8 @@ function ProductListing() {
           ) : filteredProducts.length === 0 ? (
             <div className="rounded-md border border-gray-250 dark:border-zinc-800 bg-white dark:bg-zinc-900/30 p-16 text-center shadow-sm max-w-xl mx-auto">
               <Search className="mx-auto h-12 w-12 text-gray-400 dark:text-zinc-650" />
-              <h3 className="mt-4 font-sans text-base font-bold text-gray-800 dark:text-zinc-200">No products found</h3>
-              <p className="mt-2 text-xs text-gray-500 dark:text-zinc-400">
+              <h3 className="mt-4 font-sans text-base font-bold text-gray-800 dark:text-white">No products found</h3>
+              <p className="mt-2 text-xs text-gray-505 dark:text-gray-300">
                 No products matched &ldquo;{searchQuery}&rdquo;. Try adjusting your keywords or category filters.
               </p>
             </div>

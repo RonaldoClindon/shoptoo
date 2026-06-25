@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import Navbar from "@/components/Navbar";
-import LoginForm from "@/components/LoginForm";
+import AuthModal from "@/components/AuthModal";
 
 export default function LoginPage() {
   const { user, login } = useApp();
@@ -17,8 +17,8 @@ export default function LoginPage() {
     }
   }, [user, router]);
 
-  const handleLoginSuccess = (email: string) => {
-    login(email);
+  const handleLoginSuccess = (email: string, name: string) => {
+    login(email, name);
     router.push("/");
   };
 
@@ -27,7 +27,7 @@ export default function LoginPage() {
       <Navbar />
 
       <main className="flex-1 flex items-center justify-center px-4 py-16">
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
+        <AuthModal onLoginSuccess={handleLoginSuccess} />
       </main>
 
       {/* Footer */}

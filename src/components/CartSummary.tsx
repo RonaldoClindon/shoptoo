@@ -62,7 +62,7 @@ export default function CartSummary({
 
   return (
     <div className="bg-white dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800/80 rounded-md p-6 shadow-sm space-y-6">
-      <h3 className="text-base font-bold text-gray-955 dark:text-zinc-50 tracking-tight">
+      <h3 className="text-base font-bold text-gray-955 dark:text-white tracking-tight">
         Order Summary
       </h3>
 
@@ -104,7 +104,7 @@ export default function CartSummary({
         )}
 
         {/* Total */}
-        <div className="flex items-center justify-between text-sm font-bold text-gray-955 dark:text-zinc-50 border-t border-gray-250/50 dark:border-zinc-800/50 pt-4">
+        <div className="flex items-center justify-between text-sm font-bold text-gray-955 dark:text-white border-t border-gray-250/50 dark:border-zinc-800/50 pt-4">
           <span>Total</span>
           <span className="text-base">
             {onFormatPrice(total)}
@@ -198,7 +198,7 @@ export default function CartSummary({
                     </svg>
                     <span className="font-semibold text-xs text-white dark:text-zinc-950 font-sans tracking-tight">Pay</span>
                   </div>
-                  <h3 className="font-sans text-sm font-bold text-gray-900 dark:text-zinc-50 tracking-tight">
+                  <h3 className="font-sans text-sm font-bold text-gray-900 dark:text-white tracking-tight">
                     Secure checkout
                   </h3>
                 </div>
@@ -213,7 +213,7 @@ export default function CartSummary({
               {/* Amount Info */}
               <div className="text-center bg-gray-50 dark:bg-zinc-950/40 border border-gray-100 dark:border-zinc-850 p-4 rounded-md">
                 <span className="text-xs text-gray-400 dark:text-zinc-500 font-medium block">Total Payable Amount</span>
-                <span className="text-2xl font-bold text-gray-900 dark:text-zinc-50 font-sans tracking-tight">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white font-sans tracking-tight">
                   ₹{totalInInr.toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                 </span>
                 <span className="text-xs text-gray-450 dark:text-zinc-400 block mt-1">
@@ -316,11 +316,11 @@ export default function CartSummary({
                 <CheckCircle className="h-8 w-8" />
               </div>
 
-              <h3 className="mt-5 font-sans text-base font-bold text-gray-900 dark:text-zinc-50 tracking-tight">
+              <h3 className="mt-5 font-sans text-base font-bold text-gray-900 dark:text-white tracking-tight">
                 Payment Successful
               </h3>
               
-              <p className="mt-2 text-xs leading-relaxed text-gray-500 dark:text-zinc-400">
+              <p className="mt-2 text-xs leading-relaxed text-gray-500 dark:text-gray-300">
                 Thank you for your premium purchase! Your payment was processed successfully via Google Pay.
               </p>
 

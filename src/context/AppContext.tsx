@@ -16,8 +16,8 @@ interface AppContextType {
   clearCart: () => void;
   theme: "light" | "dark";
   toggleTheme: () => void;
-  user: { email: string } | null;
-  login: (email: string) => void;
+  user: { email: string; name?: string } | null;
+  login: (email: string, name?: string) => void;
   logout: () => void;
 }
 
@@ -27,7 +27,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<{ email: string; name?: string } | null>(null);
 
   // Load state from localStorage on mount (Client-side only)
   useEffect(() => {
@@ -51,7 +51,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
 
     // 3. User initialization
-    const savedUser = localStorage.getItem("user");
+    const savedUser = localStorage.getItem("activeUser");
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
@@ -113,15 +113,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   // User operations
-  const login = (email: string) => {
-    const loggedUser = { email };
+  const login = (email: string, name?: string) => {
+    const loggedUser = { email, name: name || email.split("@")[0] };
     setUser(loggedUser);
-    localStorage.setItem("user", JSON.stringify(loggedUser));
+    localStorage.setItem("activeUser", JSON.stringify(loggedUser));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    localStorage.removeItem("activeUser");
   };
 
   return (

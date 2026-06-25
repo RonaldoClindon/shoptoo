@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ShoppingBag, Sun, Moon, LogOut } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import SearchInput from "./SearchInput";
+import { motion, AnimatePresence } from "framer-motion";
 
 function NavbarContent() {
   const { cart, theme, toggleTheme, user, logout } = useApp();
@@ -17,6 +18,7 @@ function NavbarContent() {
 
   // Search state bound locally
   const [localQuery, setLocalQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Sync local query with URL search param
   useEffect(() => {
@@ -43,7 +45,7 @@ function NavbarContent() {
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-900 dark:bg-zinc-100 font-sans text-lg font-bold text-white dark:text-zinc-950 shadow-sm">
             P
           </div>
-          <span className="font-sans text-lg font-bold tracking-tight text-gray-900 dark:text-zinc-50 select-none">
+          <span className="font-sans text-lg font-bold tracking-tight text-gray-900 dark:text-white select-none">
             PREMIUM SHOP
           </span>
         </Link>
@@ -72,37 +74,68 @@ function NavbarContent() {
             )}
           </button>
 
-          {/* User Profile / Premium Sign In Button */}
+          {/* User Profile / Premium Dropdown Section */}
           {user ? (
-            <div className="flex items-center gap-2">
-              <div 
-                className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-zinc-300 shadow-sm cursor-help"
-                title={user.email}
-              >
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="max-w-[120px] truncate">{user.email.split("@")[0]}</span>
-              </div>
+            <div className="relative">
               <button
-                onClick={logout}
-                className="rounded-md border border-gray-250 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 p-2 text-gray-500 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-650 dark:hover:text-red-400 transition-colors shadow-sm"
-                title="Log Out"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3.5 py-1.5 text-xs font-semibold text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm select-none"
               >
-                <LogOut className="h-4 w-4" />
+                <span className="font-semibold text-gray-905 dark:text-white">✨ Hi, {user.name}</span>
+                <svg
+                  className={`h-3 w-3 ml-0.5 text-gray-400 dark:text-zinc-500 transition-transform duration-200 ${
+                    isDropdownOpen ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
               </button>
+
+              {/* Dropdown Menu */}
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsDropdownOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 z-20 w-48 origin-top-right rounded-md border border-gray-150 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1.5 shadow-lg"
+                    >
+                      <div className="px-3 py-2 border-b border-gray-100 dark:border-zinc-800/80 mb-1">
+                        <p className="text-[10px] uppercase font-bold text-gray-450 dark:text-zinc-500 font-mono tracking-wider">Logged In As</p>
+                        <p className="text-[10px] text-gray-600 dark:text-gray-300 truncate mt-0.5" title={user.email}>{user.email}</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setIsDropdownOpen(false);
+                          logout();
+                        }}
+                        className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Logout</span>
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-zinc-300 hover:bg-gray-900 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-zinc-950 transition-all duration-200 shadow-sm"
+              className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/50 px-3.5 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-900 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-zinc-950 transition-all duration-200 shadow-sm"
               title="Sign In"
             >
-              <div className="h-5 w-5 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
-                <svg className="h-3 w-3 text-gray-500 dark:text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </div>
-              <span>Sign In</span>
+              <span>👤 Sign In</span>
             </Link>
           )}
 
@@ -122,7 +155,7 @@ function NavbarContent() {
         </div>
       </div>
 
-      {/* Mobile Search Bar - Sleek, rounded-md */}
+      {/* Mobile Search Bar - Center, Sleek, rounded-md */}
       <div className="px-4 pb-4 sm:hidden">
         <SearchInput
           value={localQuery}
@@ -142,7 +175,7 @@ export default function Navbar() {
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gray-900 dark:bg-zinc-100 font-sans text-lg font-bold text-white dark:text-zinc-950 shadow-sm">
             P
           </div>
-          <span className="font-sans text-lg font-bold tracking-tight text-gray-900 dark:text-zinc-550 select-none">
+          <span className="font-sans text-lg font-bold tracking-tight text-gray-900 dark:text-white select-none">
             PREMIUM SHOP
           </span>
         </div>
